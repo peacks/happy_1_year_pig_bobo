@@ -318,26 +318,25 @@
   fetch('photos/manifest.json')
     .then(r => r.json())
     .then(photos => {
-      // pick today’s photo
-      const daysTogether = Math.floor((Date.now() - togetherStart) / MS_PER_DAY) + 1;
-      const idx = (daysTogether - 1) % photos.length;
+      // pick a random photo each time
+      const idx = Math.floor(Math.random() * photos.length);
       const { url, date, location: locStr } = photos[idx];
 
       // show the picture & date
-      document.getElementById('memory-photo').src          = url;
-      document.getElementById('memory-date').textContent     = `Taken on ${date}`;
+      document.getElementById('memory-photo').src      = url;
+      document.getElementById('memory-date').textContent = `Taken on ${date}`;
 
       // parse coords
       const [lat, lon] = locStr.split(',').map(s => parseFloat(s));
 
-      // 1) show map with Leaflet
+      // show map
       const map = L.map('memory-map').setView([lat, lon], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
       }).addTo(map);
       L.marker([lat, lon]).addTo(map);
 
-      // 2) reverse-geocode to a place name via Nominatim
+      // reverse-geocode
       fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`)
         .then(r => r.json())
         .then(data => {
@@ -353,7 +352,6 @@
           document.getElementById('memory-location').textContent = place;
         })
         .catch(() => {
-          // fallback to raw coords
           document.getElementById('memory-location').textContent = locStr;
         });
     })
