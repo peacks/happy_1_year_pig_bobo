@@ -8,6 +8,14 @@
       href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
       rel="stylesheet"
     >
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js">
+    </script>
+
     <style>
         body {
             font-family: 'Pacifico', cursive, sans-serif;
@@ -207,6 +215,7 @@
       <img id="memory-photo" src="" alt="A sweet memory" />
       <p id="memory-date"></p>
       <p id="memory-location"></p>
+      <div id="memory-map" style="width:100%;height:200px;margin-top:8px;"></div>
     </div>
 
     
@@ -305,15 +314,48 @@
   });
 
   // ─── Sweet Memories loader ─────────────────────────────────────
+    // ─── Sweet Memories + Map + Reverse Geocode ─────────────────
   fetch('photos/manifest.json')
     .then(r => r.json())
     .then(photos => {
+      // pick today’s photo
       const daysTogether = Math.floor((Date.now() - togetherStart) / MS_PER_DAY) + 1;
       const idx = (daysTogether - 1) % photos.length;
-      const { url, date, location } = photos[idx];
+      const { url, date, location: locStr } = photos[idx];
+
+      // show the picture & date
       document.getElementById('memory-photo').src          = url;
       document.getElementById('memory-date').textContent     = `Taken on ${date}`;
-      document.getElementById('memory-location').textContent = `Location: ${location}`;
+
+      // parse coords
+      const [lat, lon] = locStr.split(',').map(s => parseFloat(s));
+
+      // 1) show map with Leaflet
+      const map = L.map('memory-map').setView([lat, lon], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+      L.marker([lat, lon]).addTo(map);
+
+      // 2) reverse-geocode to a place name via Nominatim
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`)
+        .then(r => r.json())
+        .then(data => {
+          const addr = data.address || {};
+          const place =
+            addr.city    ||
+            addr.town    ||
+            addr.village ||
+            addr.county  ||
+            addr.state   ||
+            addr.country ||
+            'Unknown location';
+          document.getElementById('memory-location').textContent = place;
+        })
+        .catch(() => {
+          // fallback to raw coords
+          document.getElementById('memory-location').textContent = locStr;
+        });
     })
     .catch(err => console.error('Could not load memories:', err));
 </script>
