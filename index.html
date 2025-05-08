@@ -3,54 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Voice Message</title>
+    <title>Pig Bobo's Birthday Surprise</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #ffe6f0; /* Light pink background */
             text-align: center;
-            padding: 50px;
+            padding: 20px;
+            margin: 0;
             color: #333;
+            background-image: url('images/flowers.png'); /* Floral background */
+            background-size: cover;
+            background-attachment: fixed;
         }
         h1 {
-            color: #e91e63;
-            font-size: 24px;
+            color: #e91e63; /* Bright pink */
+            font-size: 28px;
+            margin-bottom: 10px;
         }
         p {
             font-size: 18px;
-            margin: 20px 0;
+            margin: 10px 0;
+        }
+        .avatar-container {
+            margin: 20px auto;
+        }
+        #avatar {
+            width: 150px; /* Adjust size for mobile */
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.2s; /* Smooth scaling on click */
+        }
+        #avatar:hover {
+            transform: scale(1.1); /* Slight zoom on hover */
+        }
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
         }
         button {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #e91e63;
+            background-color: #ff69b4; /* Hot pink */
             color: white;
             border: none;
+            border-radius: 15px; /* Rounded edges */
             cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #d81b60;
+            background-color: #d81b60; /* Darker pink on hover */
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 24px;
+            }
+            p {
+                font-size: 16px;
+            }
+            #avatar {
+                width: 120px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Do you miss me pig bobo?</h1>
-    <p>I miss you too! Click below to listen to my duc ciq voice</p>
-    <button onclick="playRandomMessage()">Play Message</button>
+    <h1>Happy Birthday, Pig Bobo!</h1>
+    <p>Tap my avatar or the buttons below to hear my voice!</p>
+    <div class="avatar-container">
+        <img id="avatar" src="images/happy.png" alt="Cartoon Avatar" onclick="playGeneralMessage()">
+    </div>
+    <div class="button-container">
+        <button onclick="playMessage('wake_me_up')">Wake Me Up</button>
+        <button onclick="playMessage('call_my_name')">Call My Name</button>
+        <button onclick="playMessage('sing_for_me')">Sing For Me</button>
+        <!-- Add more buttons as needed -->
+    </div>
     <audio id="player"></audio>
     <script>
-        const messages = [
-            "audio/message1.mp3",
-            "audio/message2.mp3",
-            "audio/message3.mp3"
-        ];
+        // Define audio files by type
+        const audioFiles = {
+            general: [
+                'audio/general/message1.mp3',
+                'audio/general/message2.mp3'
+            ],
+            wake_me_up: [
+                'audio/wake_me_up/message1.mp3',
+                'audio/wake_me_up/message2.mp3'
+            ],
+            call_my_name: [
+                'audio/call_my_name/message1.mp3',
+                'audio/call_my_name/message2.mp3'
+            ],
+            sing_for_me: [
+                'audio/sing_for_me/message1.mp3',
+                'audio/sing_for_me/message2.mp3'
+            ]
+        };
 
-        function playRandomMessage() {
+        // Define avatar images by type
+        const avatarImages = {
+            general: 'images/happy.png',
+            wake_me_up: 'images/sleepy.png',
+            call_my_name: 'images/blushing.png',
+            sing_for_me: 'images/singing.png'
+        };
+
+        // Play a random message from the general pool
+        function playGeneralMessage() {
+            playMessage('general');
+        }
+
+        // Play a random message from a specific type
+        function playMessage(type) {
+            const messages = audioFiles[type];
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
             const player = document.getElementById('player');
+            const avatar = document.getElementById('avatar');
+
+            // Update avatar image
+            avatar.src = avatarImages[type];
+
+            // Play audio
             player.src = randomMessage;
             player.play().catch(error => {
-                console.error("Playback failed:", error);
+                console.error('Playback failed:', error);
             });
         }
     </script>
