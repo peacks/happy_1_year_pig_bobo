@@ -7,17 +7,17 @@
     <style>
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            background-color: #ffe6f0; /* Light pink background */
+            background-color: #ffe6f0;
             text-align: center;
             padding: 20px;
             margin: 0;
             color: #333;
-            background-image: url('images/flowers.png'); /* Floral background */
+            background-image: url('images/flowers.png');
             background-size: cover;
             background-attachment: fixed;
         }
         h1 {
-            color: #e91e63; /* Bright pink */
+            color: #e91e63;
             font-size: 28px;
             margin-bottom: 10px;
         }
@@ -29,13 +29,13 @@
             margin: 20px auto;
         }
         #avatar {
-            width: 150px; /* Adjust size for mobile */
+            width: 150px;
             height: auto;
             cursor: pointer;
-            transition: transform 0.2s; /* Smooth scaling on click */
+            transition: transform 0.2s;
         }
         #avatar:hover {
-            transform: scale(1.1); /* Slight zoom on hover */
+            transform: scale(1.1);
         }
         .button-container {
             display: flex;
@@ -47,16 +47,16 @@
         button {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #ff69b4; /* Hot pink */
+            background-color: #ff69b4;
             color: white;
             border: none;
-            border-radius: 15px; /* Rounded edges */
+            border-radius: 15px;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #d81b60; /* Darker pink on hover */
+            background-color: #d81b60;
         }
         @media (max-width: 600px) {
             h1 {
@@ -79,60 +79,53 @@
     <h1>Happy Birthday, Pig Bobo!</h1>
     <p>Tap my avatar or the buttons below to hear my voice!</p>
     <div class="avatar-container">
-        <img id="avatar" src="images/happy.png" alt="Cartoon Avatar" onclick="playGeneralMessage()">
+        <img id="avatar" src="images/Default_egg.png" alt="Cartoon Avatar" onclick="playGeneralMessage()">
     </div>
     <div class="button-container">
-        <button onclick="playMessage('wake_me_up')">Wake Me Up</button>
-        <button onclick="playMessage('call_my_name')">Call My Name</button>
-        <button onclick="playMessage('sing_for_me')">Sing For Me</button>
-        <!-- Add more buttons as needed -->
+        <button onclick="playMessage('benaughty')">Be Naughty</button>
+        <button onclick="playMessage('callmyname')">Call My Name</button>
+        <button onclick="playMessage('egglanguage')">Egg Language</button>
+        <button onclick="playMessage('goodmorning')">Good Morning</button>
+        <button onclick="playMessage('goodnight')">Good Night</button>
+        <button onclick="playMessage('praiseme')">Praise Me</button>
+        <button onclick="playMessage('singforme')">Sing For Me</button>
     </div>
     <audio id="player"></audio>
     <script>
-        // Define audio files by type
         const audioFiles = {
-            general: [
-                'audio/general/message1.mp3',
-                'audio/general/message2.mp3'
-            ],
-            wake_me_up: [
-                'audio/wake_me_up/message1.mp3',
-                'audio/wake_me_up/message2.mp3'
-            ],
-            call_my_name: [
-                'audio/call_my_name/message1.mp3',
-                'audio/call_my_name/message2.mp3'
-            ],
-            sing_for_me: [
-                'audio/sing_for_me/message1.mp3',
-                'audio/sing_for_me/message2.mp3'
-            ]
+            benaughty: ['audio/benaughty/message1.mp3', 'audio/benaughty/message2.mp3'],
+            callmyname: ['audio/callmyname/message1.mp3', 'audio/callmyname/message2.mp3'],
+            egglanguage: ['audio/egglanguage/message1.mp3', 'audio/egglanguage/message2.mp3'],
+            general: ['audio/general/message1.mp3', 'audio/general/message2.mp3'],
+            goodmorning: ['audio/goodmorning/message1.mp3', 'audio/goodmorning/message2.mp3'],
+            goodnight: ['audio/goodnight/message1.mp3', 'audio/goodnight/message2.mp3'],
+            praiseme: ['audio/praiseme/message1.mp3', 'audio/praiseme/message2.mp3'],
+            singforme: ['audio/singforme/message1.mp3', 'audio/singforme/message2.mp3']
         };
 
-        // Define avatar images by type
         const avatarImages = {
-            general: 'images/happy.png',
-            wake_me_up: 'images/sleepy.png',
-            call_my_name: 'images/blushing.png',
-            sing_for_me: 'images/singing.png'
+            benaughty: 'images/naughty_egg.png',
+            callmyname: 'images/Say_name_egg.png',
+            egglanguage: 'images/egg_language.png',
+            general: 'images/Default_egg.png',
+            goodmorning: 'images/Good_morning_egg.png',
+            goodnight: 'images/Sleeping_egg.png',
+            praiseme: 'images/Praise_me_egg.png',
+            singforme: 'images/Singing_egg.png'
         };
 
-        // Play a random message from the general pool
         function playGeneralMessage() {
             playMessage('general');
         }
 
-        // Play a random message from a specific type
         function playMessage(type) {
             const messages = audioFiles[type];
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
             const player = document.getElementById('player');
             const avatar = document.getElementById('avatar');
 
-            // Update avatar image
             avatar.src = avatarImages[type];
 
-            // Play audio
             player.src = randomMessage;
             player.play().catch(error => {
                 console.error('Playback failed:', error);
