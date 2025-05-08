@@ -93,14 +93,22 @@
     <audio id="player"></audio>
     <script>
         const audioFiles = {
-            benaughty: ['audio/benaughty/message1.mp3', 'audio/benaughty/message2.mp3'],
-            callmyname: ['audio/callmyname/message1.mp3', 'audio/callmyname/message2.mp3'],
-            egglanguage: ['audio/egglanguage/message1.mp3', 'audio/egglanguage/message2.mp3'],
-            general: ['audio/general/message1.mp3', 'audio/general/message2.mp3'],
-            goodmorning: ['audio/goodmorning/message1.mp3', 'audio/goodmorning/message2.mp3'],
-            goodnight: ['audio/goodnight/message1.mp3', 'audio/goodnight/message2.mp3'],
-            praiseme: ['audio/praiseme/message1.mp3', 'audio/praiseme/message2.mp3'],
-            singforme: ['audio/singforme/message1.mp3', 'audio/singforme/message2.mp3']
+            benaughty: ['audio/benaughty/message1.mp3'],
+            callmyname: ['audio/callmyname/message1.mp3'],
+            egglanguage: ['audio/egglanguage/message1.mp3'],
+            general: [
+                'audio/general/message1.mp3',
+                'audio/general/message2.mp3',
+                'audio/general/message3.mp3',
+                'audio/general/message4.mp3',
+                'audio/general/message5.mp3',
+                'audio/general/message6.mp3',
+                'audio/general/message7.mp3',
+                'audio/general/message8.mp3',],
+            goodmorning: ['audio/goodmorning/message1.mp3'],
+            goodnight: ['audio/goodnight/message1.mp3'],
+            praiseme: ['audio/praiseme/message1.mp3'],
+            singforme: ['audio/singforme/message1.mp3']
         };
 
         const avatarImages = {
@@ -122,6 +130,7 @@
             const messages = audioFiles[type];
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
             const player = document.getElementById('player');
+            player.onerror = () => console.error('Audio load error for', player.src);
             const avatar = document.getElementById('avatar');
 
             avatar.src = avatarImages[type];
