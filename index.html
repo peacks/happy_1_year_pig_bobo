@@ -129,6 +129,29 @@
           margin-right: 8px;
           transform: scale(1.2);
         }
+        .memory-container {
+          margin: 30px auto;
+          max-width: 360px;
+          background: rgba(255,255,255,0.85);
+          border-radius: 12px;
+          padding: 16px;
+          text-align: center;
+        }
+        .memory-container h2 {
+          color: #e91e63;
+          margin-bottom: 12px;
+        }
+        .memory-container img {
+          width: 100%;
+          height: auto;
+          border-radius: 8px;
+          margin-bottom: 8px;
+        }
+        .memory-container p {
+          margin: 4px 0;
+          font-size: 14px;
+          color: #555;
+        }
     </style>
 </head>
 <body>
@@ -178,6 +201,14 @@
           <li><label><input type="checkbox" id="todo-dryhair"> Dry your hair</label></li>
         </ul>
     </div>
+
+    <div id="sweet-memories" class="memory-container">
+      <h2>Sweet Memories with Hubbie</h2>
+      <img id="memory-photo" src="" alt="A sweet memory" />
+      <p id="memory-date"></p>
+      <p id="memory-location"></p>
+    </div>
+
     
     <audio id="player"></audio>
     
@@ -271,6 +302,26 @@
               updateCounters();
               setInterval(updateCounters, 1000 * 60 * 60);
         });
+
+        // 1) Fetch the manifest.json from the photos/ folder
+        fetch('photos/manifest.json')
+          .then(response => response.json())
+          .then(photos => {
+            // 2) Figure out which photo to show today:
+            //    (reuse togetherStart and MS_PER_DAY from your counters code)
+            const daysTogether = Math.floor((Date.now() - togetherStart) / MS_PER_DAY) + 1;
+            const index = (daysTogether - 1) % photos.length;
+        
+            // 3) Pull out its URL, date, and location
+            const { url, date, location } = photos[index];
+        
+            // 4) Update the DOM
+            document.getElementById('memory-photo').src      = url;
+            document.getElementById('memory-date').textContent     = `Taken on ${date}`;
+            document.getElementById('memory-location').textContent = `Location: ${location}`;
+          })
+          .catch(err => console.error('Could not load memories:', err));
+        
 
     function syncCheckbox(id) {
       const cb = document.getElementById(id);
