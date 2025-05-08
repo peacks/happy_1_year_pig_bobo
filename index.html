@@ -213,131 +213,110 @@
     <audio id="player"></audio>
     
     <script>
-        // ─── Reset the checklist once per calendar day ───
-    (function resetChecklistDaily() {
-      const today = new Date().toISOString().split('T')[0];        // e.g. "2025-05-08"
-      const last = localStorage.getItem('checklistDate');
-    
-      if (last !== today) {
-        // List all of your checkbox IDs here:
-        [
-          'todo-water','todo-poop','todo-miss',
-          'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair'
-        ].forEach(id => {
-          localStorage.removeItem(id);
-        });
-    
-        localStorage.setItem('checklistDate', today);
-      }
-    })();
+  // ─── Globals ───────────────────────────────────────────────────
+  const MS_PER_DAY    = 1000 * 60 * 60 * 24;
+  const togetherStart = new Date("2024-06-22T00:00:00+08:00");
+  const weddingDay    = new Date("2030-06-22T00:00:00+08:00");
 
-        const audioFiles = {
-            benaughty: ['audio/benaughty/message1.mp3'],
-            callmyname: ['audio/callmyname/message1.mp3'],
-            egglanguage: ['audio/egglanguage/message3.mp3'],
-            general: [
-                'audio/general/message1.mp3',
-                'audio/general/message2.mp3',
-                'audio/general/message3.mp3',
-                'audio/general/message4.mp3',
-                'audio/general/message5.mp3',
-                'audio/general/message6.mp3',
-                'audio/general/message7.mp3',
-                'audio/general/message8.mp3',],
-            goodmorning: ['audio/goodmorning/message4.mp3'],
-            goodnight: ['audio/goodnight/message5.mp3'],
-            praiseme: ['audio/praiseme/message7.mp3'],
-            singforme: ['audio/singforme/message8.mp3']
-        };
-
-        const avatarImages = {
-            benaughty: 'images/naughty_egg.png',
-            callmyname: 'images/Say_name_egg.png',
-            egglanguage: 'images/egg_language.png',
-            general: 'images/Default_egg.png',
-            goodmorning: 'images/Good_morning_egg.png',
-            goodnight: 'images/Sleeping_egg.png',
-            praiseme: 'images/Praise_me_egg.png',
-            singforme: 'images/Singing_egg.png'
-        };
-
-        function playGeneralMessage() {
-            playMessage('general');
-        }
-
-        function playMessage(type) {
-            const messages = audioFiles[type];
-            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            const player = document.getElementById('player');
-            player.onerror = () => console.error('Audio load error for', player.src);
-            const avatar = document.getElementById('avatar');
-
-            avatar.src = avatarImages[type];
-
-            player.src = randomMessage;
-            player.play().catch(error => {
-                console.error('Playback failed:', error);
-            });
-        }
-        function updateCounters() {
-          const MS_PER_DAY = 1000 * 60 * 60 * 24;
-          // Define the start & end in Hong Kong time (UTC+8)
-          const togetherStart = new Date("2024-06-22T00:00:00+08:00");
-          const weddingDay   = new Date("2030-06-22T00:00:00+08:00");
-          const now = new Date();
-        
-          // 1) Days Together (inclusive)
-          const diffTogether = now - togetherStart;
-          const daysTogether = Math.floor(diffTogether / MS_PER_DAY) + 1;
-          document.getElementById("days-together").textContent = daysTogether;
-        
-          // 2) Days Until Wedding (exclusive)
-          const diffUntil = weddingDay - now;
-          const daysUntil  = Math.ceil(diffUntil / MS_PER_DAY);
-          document.getElementById("days-until-wedding").textContent = daysUntil;
-        }
-        
-            // Run on load, then update every hour
-        window.addEventListener("load", () => {
-              updateCounters();
-              setInterval(updateCounters, 1000 * 60 * 60);
-        });
-
-        // 1) Fetch the manifest.json from the photos/ folder
-        fetch('photos/manifest.json')
-          .then(response => response.json())
-          .then(photos => {
-            // 2) Figure out which photo to show today:
-            //    (reuse togetherStart and MS_PER_DAY from your counters code)
-            const daysTogether = Math.floor((Date.now() - togetherStart) / MS_PER_DAY) + 1;
-            const index = (daysTogether - 1) % photos.length;
-        
-            // 3) Pull out its URL, date, and location
-            const { url, date, location } = photos[index];
-        
-            // 4) Update the DOM
-            document.getElementById('memory-photo').src      = url;
-            document.getElementById('memory-date').textContent     = `Taken on ${date}`;
-            document.getElementById('memory-location').textContent = `Location: ${location}`;
-          })
-          .catch(err => console.error('Could not load memories:', err));
-        
-
-    function syncCheckbox(id) {
-      const cb = document.getElementById(id);
-      // restore
-      cb.checked = localStorage.getItem(id) === "true";
-      // save on change
-      cb.addEventListener("change", () => {
-        localStorage.setItem(id, cb.checked);
-      });
+  // ─── Reset checklist once per day ───────────────────────────────
+  (function resetChecklistDaily() {
+    const today = new Date().toISOString().split('T')[0];
+    if (localStorage.getItem('checklistDate') !== today) {
+      [
+        'todo-water','todo-poop','todo-miss',
+        'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair'
+      ].forEach(id => localStorage.removeItem(id));
+      localStorage.setItem('checklistDate', today);
     }
-    
-    // on load
-    ["todo-water","todo-poop","todo-miss",
-     "todo-contacts","todo-makeup","todo-blanket","todo-lights","todo-dryhair"]
-      .forEach(syncCheckbox);
+  })();
 
-    </script>
+  // ─── Audio & Avatar data ────────────────────────────────────────
+  const audioFiles = {
+    benaughty:   ['audio/benaughty/message1.mp3'],
+    callmyname:  ['audio/callmyname/message1.mp3'],
+    egglanguage: ['audio/egglanguage/message3.mp3'],
+    general: [
+      'audio/general/message1.mp3',
+      'audio/general/message2.mp3',
+      'audio/general/message3.mp3',
+      'audio/general/message4.mp3',
+      'audio/general/message5.mp3',
+      'audio/general/message6.mp3',
+      'audio/general/message7.mp3',
+      'audio/general/message8.mp3'
+    ],
+    goodmorning:['audio/goodmorning/message4.mp3'],
+    goodnight:  ['audio/goodnight/message5.mp3'],
+    praiseme:   ['audio/praiseme/message7.mp3'],
+    singforme:  ['audio/singforme/message8.mp3']
+  };
+
+  const avatarImages = {
+    benaughty:   'images/naughty_egg.png',
+    callmyname:  'images/Say_name_egg.png',
+    egglanguage: 'images/egg_language.png',
+    general:     'images/Default_egg.png',
+    goodmorning:'images/Good_morning_egg.png',
+    goodnight:   'images/Sleeping_egg.png',
+    praiseme:    'images/Praise_me_egg.png',
+    singforme:   'images/Singing_egg.png'
+  };
+
+  // ─── Audio playback functions ──────────────────────────────────
+  function playGeneralMessage() {
+    playMessage('general');
+  }
+  function playMessage(type) {
+    const player = document.getElementById('player');
+    player.onerror = () => console.error('Audio load error for', player.src);
+    const randomMessage = audioFiles[type][
+      Math.floor(Math.random() * audioFiles[type].length)
+    ];
+    document.getElementById('avatar').src = avatarImages[type];
+    player.src = randomMessage;
+    player.play().catch(err => console.error('Playback failed:', err));
+  }
+
+  // ─── Counters ──────────────────────────────────────────────────
+  function updateCounters() {
+    const now = new Date();
+    const daysTogether = Math.floor((now - togetherStart) / MS_PER_DAY) + 1;
+    document.getElementById('days-together').textContent = daysTogether;
+    const daysUntil = Math.ceil((weddingDay - now) / MS_PER_DAY);
+    document.getElementById('days-until-wedding').textContent = daysUntil;
+  }
+
+  // ─── Checkbox persistence ──────────────────────────────────────
+  function syncCheckbox(id) {
+    const cb = document.getElementById(id);
+    cb.checked = localStorage.getItem(id) === 'true';
+    cb.addEventListener('change', () => {
+      localStorage.setItem(id, cb.checked);
+    });
+  }
+
+  // ─── Initialize on page load ───────────────────────────────────
+  window.addEventListener('load', () => {
+    updateCounters();
+    setInterval(updateCounters, 1000 * 60 * 60);
+    ['todo-water','todo-poop','todo-miss',
+     'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair']
+      .forEach(syncCheckbox);
+  });
+
+  // ─── Sweet Memories loader ─────────────────────────────────────
+  fetch('photos/manifest.json')
+    .then(r => r.json())
+    .then(photos => {
+      const daysTogether = Math.floor((Date.now() - togetherStart) / MS_PER_DAY) + 1;
+      const idx = (daysTogether - 1) % photos.length;
+      const { url, date, location } = photos[idx];
+      document.getElementById('memory-photo').src          = url;
+      document.getElementById('memory-date').textContent     = `Taken on ${date}`;
+      document.getElementById('memory-location').textContent = `Location: ${location}`;
+    })
+    .catch(err => console.error('Could not load memories:', err));
+</script>
+
 </body>
 </html>
