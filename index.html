@@ -182,6 +182,24 @@
     <audio id="player"></audio>
     
     <script>
+        // ─── Reset the checklist once per calendar day ───
+    (function resetChecklistDaily() {
+      const today = new Date().toISOString().split('T')[0];        // e.g. "2025-05-08"
+      const last = localStorage.getItem('checklistDate');
+    
+      if (last !== today) {
+        // List all of your checkbox IDs here:
+        [
+          'todo-water','todo-poop','todo-miss',
+          'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair'
+        ].forEach(id => {
+          localStorage.removeItem(id);
+        });
+    
+        localStorage.setItem('checklistDate', today);
+      }
+    })();
+
         const audioFiles = {
             benaughty: ['audio/benaughty/message1.mp3'],
             callmyname: ['audio/callmyname/message1.mp3'],
@@ -253,6 +271,21 @@
               updateCounters();
               setInterval(updateCounters, 1000 * 60 * 60);
         });
+
+    function syncCheckbox(id) {
+      const cb = document.getElementById(id);
+      // restore
+      cb.checked = localStorage.getItem(id) === "true";
+      // save on change
+      cb.addEventListener("change", () => {
+        localStorage.setItem(id, cb.checked);
+      });
+    }
+    
+    // on load
+    ["todo-water","todo-poop","todo-miss",
+     "todo-contacts","todo-makeup","todo-blanket","todo-lights","todo-dryhair"]
+      .forEach(syncCheckbox);
 
     </script>
 </body>
