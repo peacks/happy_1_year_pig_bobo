@@ -33,10 +33,10 @@
             margin: 20px auto;
         }
         #avatar {
-            width: 150px;
-            height: auto;
-            cursor: pointer;
-            transition: transform 0.2s;
+          max-height: 65vh;      /* avatar will never exceed 65% of the viewport height */
+          width: auto;           /* scale width to maintain aspect ratio */
+          margin: 20px auto;     /* give it a little breathing room top/bottom */
+          transition: transform 0.2s;
         }
         #avatar:hover {
             transform: scale(1.1);
@@ -77,6 +77,58 @@
                 padding: 8px 16px;
             }
         }
+
+        .counter-container {
+          display: flex;
+          justify-content: center;
+          gap: 20px;
+          margin: 20px 0;
+        }
+        .counter {
+          background: rgba(255, 255, 255, 0.8);
+          padding: 12px 18px;
+          border-radius: 12px;
+          min-width: 120px;
+        }
+        .counter h2 {
+          margin: 0;
+          font-size: 16px;
+          color: #e91e63;
+        }
+        .counter p {
+          font-size: 24px;
+          font-weight: bold;
+          margin: 4px 0 0;
+        }
+        
+        .todo-container {
+          text-align: left;
+          max-width: 320px;
+          margin: 30px auto;
+          background: rgba(255,255,255,0.8);
+          padding: 16px;
+          border-radius: 12px;
+        }
+        .todo-container h2 {
+          font-size: 18px;
+          color: #e91e63;
+          margin-bottom: 8px;
+        }
+        .todo-container ul {
+          list-style: none;
+          padding: 0;
+        }
+        .todo-container li {
+          margin-bottom: 8px;
+        }
+        .todo-container label {
+          cursor: pointer;
+          font-size: 16px;
+        }
+        .todo-container input[type="checkbox"] {
+          margin-right: 8px;
+          transform: scale(1.2);
+        }
     </style>
 </head>
 <body>
@@ -94,7 +146,41 @@
         <button onclick="playMessage('praiseme')">Praise Me</button>
         <button onclick="playMessage('singforme')">Sing For Me</button>
     </div>
+    
+    <!-- ─── Relationship Counters ─── -->
+    <div id="counters" class="counter-container">
+    <div class="counter">
+        <h2>Days Together</h2>
+        <p id="days-together">—</p>
+            </div>
+            <div class="counter">
+              <h2>Days Until Wedding</h2>
+              <p id="days-until-wedding">—</p>
+            </div>
+    </div>
+
+    
+    <!-- ─── To-Do Lists ─── -->
+    <div id="todo-lists" class="todo-container">
+        <h2>Daily To-Dos</h2>
+        <ul>
+          <li><label><input type="checkbox" id="todo-water"> Drink 2 L of water</label></li>
+          <li><label><input type="checkbox" id="todo-poop"> Did you poop?</label></li>
+          <li><label><input type="checkbox" id="todo-miss"> Did you miss me?</label></li>
+        </ul>
+    
+        <h2>Before Bed</h2>
+        <ul>
+          <li><label><input type="checkbox" id="todo-contacts"> Remove contacts</label></li>
+          <li><label><input type="checkbox" id="todo-makeup"> Remove makeup</label></li>
+          <li><label><input type="checkbox" id="todo-blanket"> Put on blanket</label></li>
+          <li><label><input type="checkbox" id="todo-lights"> Turn off the lights</label></li>
+          <li><label><input type="checkbox" id="todo-dryhair"> Dry your hair</label></li>
+        </ul>
+    </div>
+    
     <audio id="player"></audio>
+    
     <script>
         const audioFiles = {
             benaughty: ['audio/benaughty/message1.mp3'],
@@ -144,6 +230,30 @@
                 console.error('Playback failed:', error);
             });
         }
+        function updateCounters() {
+          const MS_PER_DAY = 1000 * 60 * 60 * 24;
+          // Define the start & end in Hong Kong time (UTC+8)
+          const togetherStart = new Date("2024-06-22T00:00:00+08:00");
+          const weddingDay   = new Date("2030-06-22T00:00:00+08:00");
+          const now = new Date();
+        
+          // 1) Days Together (inclusive)
+          const diffTogether = now - togetherStart;
+          const daysTogether = Math.floor(diffTogether / MS_PER_DAY) + 1;
+          document.getElementById("days-together").textContent = daysTogether;
+        
+          // 2) Days Until Wedding (exclusive)
+          const diffUntil = weddingDay - now;
+          const daysUntil  = Math.ceil(diffUntil / MS_PER_DAY);
+          document.getElementById("days-until-wedding").textContent = daysUntil;
+        }
+        
+            // Run on load, then update every hour
+        window.addEventListener("load", () => {
+              updateCounters();
+              setInterval(updateCounters, 1000 * 60 * 60);
+        });
+
     </script>
 </body>
 </html>
