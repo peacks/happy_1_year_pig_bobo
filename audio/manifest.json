@@ -1,29 +1,64 @@
 {
   "benaughty": [
-    "audio/benaughty/message1.mp3"
+    "audio/benaughty/Bro bro up zor.m4a",
+    "audio/benaughty/Hello dik dik.m4a",
+    "audio/benaughty/Hello golden leg.m4a",
+    "audio/benaughty/Hello zhud zhud.m4a",
+    "audio/benaughty/Little heart.m4a",
+    "audio/benaughty/Mui bao.m4a",
+    "audio/benaughty/Stick and mong you.m4a",
+    "audio/benaughty/Unknown fur.m4a",
+    "audio/benaughty/garden.m4a",
+    "audio/benaughty/hehehehe.m4a",
+    "audio/benaughty/kiwi.m4a",
+    "audio/benaughty/muah.m4a",
+    "audio/benaughty/sail?.m4a"
   ],
   "callmyname": [
-    "audio/callmyname/message2.mp3"
+    "audio/callmyname/Big boss.m4a",
+    "audio/callmyname/Cute face.m4a",
+    "audio/callmyname/Pig bobo.m4a",
+    "audio/callmyname/Tank pig.m4a",
+    "audio/callmyname/Wifey bobo pig.m4a",
+    "audio/callmyname/Wifey pig pig pig .m4a"
   ],
   "egglanguage": [
-    "audio/egglanguage/message3.mp3"
+    "audio/egglanguage/Bulu fast.m4a",
+    "audio/egglanguage/Bulu slow.m4a",
+    "audio/egglanguage/abadu.m4a",
+    "audio/egglanguage/bububu\\.m4a",
+    "audio/egglanguage/mumumu.m4a"
   ],
   "general": [
-    "audio/general/message1.mp3",
-    "audio/general/message2.mp3",
-    "audio/general/message3.mp3",
-    "audio/general/message8.mp3"
+    "audio/general/Drink water?.m4a",
+    "audio/general/Have meal?.m4a",
+    "audio/general/Hello lopo bo.m4a",
+    "audio/general/I miss you.m4a",
+    "audio/general/Monitor you.m4a",
+    "audio/general/Skincare?.m4a",
+    "audio/general/Want to marry you pig pig.m4a",
+    "audio/general/Wet bobo?.m4a"
   ],
   "goodmorning": [
-    "audio/goodmorning/message8.mp3"
+    "audio/goodmorning/Good morning lopobo.m4a",
+    "audio/goodmorning/Hit pat pat if not wake.m4a",
+    "audio/goodmorning/Wake up already so cute?.m4a",
+    "audio/goodmorning/Woken up?.m4a"
   ],
   "goodnight": [
-    "audio/goodnight/message1.mp3"
+    "audio/goodnight/Go to sleep lopo.m4a",
+    "audio/goodnight/Good night.m4a",
+    "audio/goodnight/Sleep reminder.m4a"
   ],
   "praiseme": [
-    "audio/praiseme/message1.mp3"
+    "audio/praiseme/No pig no egg.m4a",
+    "audio/praiseme/So cute.m4a",
+    "audio/praiseme/Very duc yi.m4a"
   ],
   "singforme": [
-    "audio/singforme/message1.mp3"
+    "audio/singforme/Bububu song.m4a",
+    "audio/singforme/Little pig walk zoo.m4a",
+    "audio/singforme/Little stomach song.m4a",
+    "audio/singforme/Walking with Lopo song.m4a"
   ]
 }
