@@ -323,13 +323,19 @@
       const { url, date, location: locStr } = photos[idx];
 
       // show the picture & date
-      document.getElementById('memory-photo').src      = url;
-      const takenDate = new Date(date);
-        const hh = String(takenDate.getHours()).padStart(2, '0');
-        const mm = String(takenDate.getMinutes()).padStart(2, '0');
-        const formattedTime = `${hh}:${mm}`;
-        document.getElementById('memory-date').textContent = `Taken at ${formattedTime}`;
-
+        document.getElementById('memory-photo').src = url;
+        
+        let formattedTime = '';
+        const takenDate = new Date(date);
+        
+        if (!isNaN(takenDate.getTime()) && date.includes('T')) {
+          const hh = String(takenDate.getHours()).padStart(2, '0');
+          const mm = String(takenDate.getMinutes()).padStart(2, '0');
+          formattedTime = `${hh}:${mm}`;
+          document.getElementById('memory-date').textContent = `Taken at ${formattedTime}`;
+        } else {
+          document.getElementById('memory-date').textContent = `Taken on ${date}`;
+        }
       // parse coords
       const [lat, lon] = locStr.split(',').map(s => parseFloat(s));
 
