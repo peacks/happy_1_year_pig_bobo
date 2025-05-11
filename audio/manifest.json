@@ -1,0 +1,29 @@
+{
+  "benaughty": [
+    "/Users/User/Downloads/Audio/benaughty/message1.mp3"
+  ],
+  "callmyname": [
+    "/Users/User/Downloads/Audio/callmyname/message2.mp3"
+  ],
+  "egglanguage": [
+    "/Users/User/Downloads/Audio/egglanguage/message3.mp3"
+  ],
+  "general": [
+    "/Users/User/Downloads/Audio/general/message1.mp3",
+    "/Users/User/Downloads/Audio/general/message2.mp3",
+    "/Users/User/Downloads/Audio/general/message3.mp3",
+    "/Users/User/Downloads/Audio/general/message8.mp3"
+  ],
+  "goodmorning": [
+    "/Users/User/Downloads/Audio/goodmorning/message8.mp3"
+  ],
+  "goodnight": [
+    "/Users/User/Downloads/Audio/goodnight/message1.mp3"
+  ],
+  "praiseme": [
+    "/Users/User/Downloads/Audio/praiseme/message1.mp3"
+  ],
+  "singforme": [
+    "/Users/User/Downloads/Audio/singforme/message1.mp3"
+  ]
+}
