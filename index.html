@@ -324,7 +324,11 @@
 
       // show the picture & date
       document.getElementById('memory-photo').src      = url;
-      document.getElementById('memory-date').textContent = `Taken on ${date}`;
+      const takenDate = new Date(date);
+        const hh = String(takenDate.getHours()).padStart(2, '0');
+        const mm = String(takenDate.getMinutes()).padStart(2, '0');
+        const formattedTime = `${hh}:${mm}`;
+        document.getElementById('memory-date').textContent = `Taken at ${formattedTime}`;
 
       // parse coords
       const [lat, lon] = locStr.split(',').map(s => parseFloat(s));
@@ -341,16 +345,26 @@
         .then(r => r.json())
         .then(data => {
           const addr = data.address || {};
-          const place =
-            addr.city    ||
-            addr.town    ||
-            addr.village ||
-            addr.county  ||
-            addr.state   ||
-            addr.country ||
-            'Unknown location';
-          document.getElementById('memory-location').textContent = place;
-        })
+          const city =
+              addr.city    ||
+              addr.town    ||
+              addr.village ||
+              addr.county  ||
+              addr.state;
+            
+            const country = addr.country;
+            
+            let placeText = 'Unknown location';
+            if (city && country) {
+              placeText = `${city}, ${country}`;
+            } else if (city) {
+              placeText = city;
+            } else if (country) {
+              placeText = country;
+            }
+            
+            document.getElementById('memory-location').textContent = placeText;
+            })
         .catch(() => {
           document.getElementById('memory-location').textContent = locStr;
         });
