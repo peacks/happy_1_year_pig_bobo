@@ -1,64 +1,64 @@
 {
   "benaughty": [
-    "audio/benaughty/Bro bro up zor.m4a",
-    "audio/benaughty/Hello dik dik.m4a",
-    "audio/benaughty/Hello golden leg.m4a",
-    "audio/benaughty/Hello zhud zhud.m4a",
-    "audio/benaughty/Little heart.m4a",
-    "audio/benaughty/Mui bao.m4a",
-    "audio/benaughty/Stick and mong you.m4a",
-    "audio/benaughty/Unknown fur.m4a",
-    "audio/benaughty/garden.m4a",
-    "audio/benaughty/hehehehe.m4a",
-    "audio/benaughty/kiwi.m4a",
-    "audio/benaughty/muah.m4a",
-    "audio/benaughty/sail?.m4a"
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/Bro%20bro%20up%20zor.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/Hello%20dik%20dik.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/Hello%20golden%20leg.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/Hello%20zhud%20zhud.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/Little%20heart.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/Mui%20bao.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/Stick%20and%20mong%20you.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/Unknown%20fur.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/garden.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/hehehehe.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/kiwi.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/muah.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/benaughty/sail.mp3"
   ],
   "callmyname": [
-    "audio/callmyname/Big boss.m4a",
-    "audio/callmyname/Cute face.m4a",
-    "audio/callmyname/Pig bobo.m4a",
-    "audio/callmyname/Tank pig.m4a",
-    "audio/callmyname/Wifey bobo pig.m4a",
-    "audio/callmyname/Wifey pig pig pig .m4a"
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/callmyname/Big%20boss.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/callmyname/Cute%20face.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/callmyname/Pig%20bobo.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/callmyname/Tank%20pig.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/callmyname/Wifey%20bobo%20pig.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/callmyname/Wifey%20pig%20pig%20pig%20.mp3"
   ],
   "egglanguage": [
-    "audio/egglanguage/Bulu fast.m4a",
-    "audio/egglanguage/Bulu slow.m4a",
-    "audio/egglanguage/abadu.m4a",
-    "audio/egglanguage/bububu\\.m4a",
-    "audio/egglanguage/mumumu.m4a"
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/Bulu-fast.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/Bulu-slow.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/abadu.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/bububu_.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/mumumu.mp3"
   ],
   "general": [
-    "audio/general/Drink water?.m4a",
-    "audio/general/Have meal?.m4a",
-    "audio/general/Hello lopo bo.m4a",
-    "audio/general/I miss you.m4a",
-    "audio/general/Monitor you.m4a",
-    "audio/general/Skincare?.m4a",
-    "audio/general/Want to marry you pig pig.m4a",
-    "audio/general/Wet bobo?.m4a"
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/general/Have%20meal.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/general/Hello%20lopo%20bo.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/general/I%20miss%20you.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/general/Monitor-you.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/general/Skincare_.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/general/Want%20to%20marry%20you%20pig%20pig.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/general/Want-to-marry-you-pig-pig.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/general/Wet-bobo_.mp3"
   ],
   "goodmorning": [
-    "audio/goodmorning/Good morning lopobo.m4a",
-    "audio/goodmorning/Hit pat pat if not wake.m4a",
-    "audio/goodmorning/Wake up already so cute?.m4a",
-    "audio/goodmorning/Woken up?.m4a"
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/goodmorning/Good%20morning%20lopobo.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/goodmorning/Hit%20pat%20pat%20if%20not%20wake.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/goodmorning/Wake%20up%20already%20so%20cute.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/goodmorning/Woken%20up.mp3"
   ],
   "goodnight": [
-    "audio/goodnight/Go to sleep lopo.m4a",
-    "audio/goodnight/Good night.m4a",
-    "audio/goodnight/Sleep reminder.m4a"
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/goodnight/Go%20to%20sleep%20lopo.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/goodnight/Good%20night.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/goodnight/Sleep%20reminder.mp3"
   ],
   "praiseme": [
-    "audio/praiseme/No pig no egg.m4a",
-    "audio/praiseme/So cute.m4a",
-    "audio/praiseme/Very duc yi.m4a"
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/praiseme/No%20pig%20no%20egg.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/praiseme/So%20cute.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/praiseme/Very%20duc%20yi.mp3"
   ],
   "singforme": [
-    "audio/singforme/Bububu song.m4a",
-    "audio/singforme/Little pig walk zoo.m4a",
-    "audio/singforme/Little stomach song.m4a",
-    "audio/singforme/Walking with Lopo song.m4a"
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/singforme/Bububu%20song.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/singforme/Little%20pig%20walk%20zoo.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/singforme/Little%20stomach%20song.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/singforme/Walking%20with%20Lopo%20song.mp3"
   ]
 }
