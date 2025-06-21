@@ -201,7 +201,7 @@
     <div id="todo-lists" class="todo-container">
         <h2>Daily To-Dos</h2>
         <ul>
-          <li><label><input type="checkbox" id="todo-water"> Drink 2 L of water</label></li>
+          <li><label><input type="checkbox" id="todo-water"> Did you drink 2L of water?</label></li>
           <li><label><input type="checkbox" id="todo-poop"> Did you poop?</label></li>
           <li><label><input type="checkbox" id="todo-miss"> Did you miss me?</label></li>
         </ul>
@@ -212,7 +212,7 @@
           <li><label><input type="checkbox" id="todo-makeup"> Remove eye makeup</label></li>
           <li><label><input type="checkbox" id="todo-blanket"> Kum pei</label></li>
           <li><label><input type="checkbox" id="todo-lights"> Turn off the lights</label></li>
-          <li><label><input type="checkbox" id="todo-dryhair"> Dry your hair</label></li>
+          <li><label><input type="checkbox" id="todo-dryhair"> Dry hair hair</label></li>
         </ul>
     </div>
 
@@ -295,7 +295,7 @@
   // ─── Counters ──────────────────────────────────────────────────
   function updateCounters() {
     const now = new Date();
-    const daysTogether = Math.floor((now - togetherStart) / MS_PER_DAY) + 1;
+    const daysTogether = Math.floor((now - togetherStart) / MS_PER_DAY);
     document.getElementById('days-together').textContent = daysTogether;
     const daysUntil = Math.ceil((weddingDay - now) / MS_PER_DAY);
     document.getElementById('days-until-wedding').textContent = daysUntil;
