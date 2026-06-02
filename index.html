@@ -3,140 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1 Year Surprise</title>
-    
+    <title>Virtual Egg Bobo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-
     <style>
-        /* ── Nav Bar ── */
         .navbar {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            background: rgba(255,255,255,0.85);
-            padding: 10px 16px;
-            border-radius: 16px;
-            margin-bottom: 20px;
+            display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
+            background: rgba(255,255,255,0.85); padding: 10px 16px;
+            border-radius: 16px; margin-bottom: 20px;
             box-shadow: 0 2px 8px rgba(233,30,99,0.10);
         }
         .navbar a {
-            text-decoration: none;
-            color: #e91e63;
-            font-weight: 700;
-            font-size: 14px;
-            padding: 7px 14px;
-            border-radius: 20px;
-            transition: background 0.2s, color 0.2s;
+            text-decoration: none; color: #e91e63; font-weight: 700; font-size: 14px;
+            padding: 7px 14px; border-radius: 20px; transition: background 0.2s, color 0.2s;
         }
-        .navbar a:hover, .navbar a.active {
-            background: #e91e63;
-            color: white;
-        }
-
+        .navbar a:hover, .navbar a.active { background: #e91e63; color: white; }
         body {
-            font-family: 'Lato', sans-serif;
-            background-color: #ffe6f0;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-            color: #333;
-            background-image: url('images/flowers.png');
-            background-size: cover;
-            background-attachment: fixed;
+            font-family: 'Lato', sans-serif; background-color: #ffe6f0;
+            text-align: center; padding: 20px; margin: 0; color: #333;
+            background-image: url('images/flowers.png'); background-size: cover; background-attachment: fixed;
         }
         h1 { color: #e91e63; font-size: 28px; margin-bottom: 10px; }
         p { font-size: 18px; margin: 10px 0; }
         .avatar-container { margin: 20px auto; }
-        #avatar {
-            max-height: 100vh;
-            width: auto;
-            margin: 20px auto;
-            transition: transform 0.2s;
-        }
+        #avatar { max-height: 100vh; width: auto; margin: 20px auto; transition: transform 0.2s; }
         #avatar:hover { transform: scale(1.1); }
-        .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
+        .button-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
         button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #ff69b4;
-            color: white;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background-color 0.3s;
+            padding: 10px 20px; font-size: 16px; background-color: #ff69b4; color: white;
+            border: none; border-radius: 15px; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: background-color 0.3s;
         }
         button:hover { background-color: #d81b60; }
         @media (max-width: 600px) {
-            h1 { font-size: 24px; }
-            p { font-size: 16px; }
-            #avatar { width: 120px; }
+            h1 { font-size: 24px; } p { font-size: 16px; } #avatar { width: 120px; }
             button { font-size: 14px; padding: 8px 16px; }
         }
-        .counter-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 20px 0;
-        }
-        .counter {
-            background: rgba(255,255,255,0.8);
-            padding: 12px 18px;
-            border-radius: 12px;
-            min-width: 120px;
-        }
+        .counter-container { display: flex; justify-content: center; gap: 20px; margin: 20px 0; }
+        .counter { background: rgba(255,255,255,0.8); padding: 12px 18px; border-radius: 12px; min-width: 120px; }
         .counter h2 { margin: 0; font-size: 16px; color: #e91e63; }
         .counter p { font-size: 24px; font-weight: bold; margin: 4px 0 0; }
-        .todo-container {
-            text-align: left;
-            max-width: 320px;
-            margin: 30px auto;
-            background: rgba(255,255,255,0.8);
-            padding: 16px;
-            border-radius: 12px;
-        }
+        .todo-container { text-align: left; max-width: 320px; margin: 30px auto; background: rgba(255,255,255,0.8); padding: 16px; border-radius: 12px; }
         .todo-container h2 { font-size: 18px; color: #e91e63; margin-bottom: 8px; }
         .todo-container ul { list-style: none; padding: 0; }
         .todo-container li { margin-bottom: 8px; }
         .todo-container label { cursor: pointer; font-size: 16px; }
         .todo-container input[type="checkbox"] { margin-right: 8px; transform: scale(1.2); }
-        .memory-container {
-            margin: 30px auto;
-            max-width: 360px;
-            background: rgba(255,255,255,0.85);
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-        }
+        .memory-container { margin: 30px auto; max-width: 360px; background: rgba(255,255,255,0.85); border-radius: 12px; padding: 16px; text-align: center; }
         .memory-container h2 { color: #e91e63; margin-bottom: 12px; }
         .memory-container img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 8px; }
         .memory-container p { margin: 4px 0; font-size: 14px; color: #555; }
     </style>
 </head>
 <body>
-
-    <!-- ─── Navigation Bar ─── -->
     <nav class="navbar">
         <a href="index.html" class="active">🥚 Egg Bobo</a>
         <a href="sleep.html">😴 Sleep</a>
         <a href="poop.html">💩 Poop</a>
-        <a href="contacts.html">👁️ Con Lens</a>
+        <a href="contacts.html">👁️ Con</a>
     </nav>
-
-    <h1>Happy 1 year anniversary!</h1>
-    <p>Introducing: VIRTUAL EGG BOBO</p>
+    <h1>Virtual Egg Bobo</h1>
     <p>Talk to virtual egg bobo by tapping his head or the buttons below. HEHEHE</p>
     <div class="avatar-container">
         <img id="avatar" src="images/Default_egg.png" alt="Cartoon Avatar" onclick="playGeneralMessage()">
@@ -152,157 +82,104 @@
         <button onclick="playMessage('stretchwithme')">Stretch With Me</button>
         <button onclick="playMessage('gayauintern')">Gayau Intern</button>
     </div>
-
-    <!-- ─── Relationship Counters ─── -->
     <div id="counters" class="counter-container">
-      <div class="counter">
-        <h2>Days Together</h2>
-        <p id="days-together">—</p>
-      </div>
-      <div class="counter">
-        <h2>Days Until Wedding</h2>
-        <p id="days-until-wedding">—</p>
-      </div>
+        <div class="counter"><h2>Days Together</h2><p id="days-together">—</p></div>
+        <div class="counter"><h2>Days Until Wedding</h2><p id="days-until-wedding">—</p></div>
     </div>
-
-    <!-- ─── To-Do Lists ─── -->
     <div id="todo-lists" class="todo-container">
         <h2>Daily To-Dos</h2>
         <ul>
-          <li><label><input type="checkbox" id="todo-water"> Did you drink 2L of water?</label></li>
-          <li><label><input type="checkbox" id="todo-poop"> Did you poop?</label></li>
-          <li><label><input type="checkbox" id="todo-miss"> Did you miss me?</label></li>
+            <li><label><input type="checkbox" id="todo-water"> Did you drink 2L of water?</label></li>
+            <li><label><input type="checkbox" id="todo-poop"> Did you poop?</label></li>
+            <li><label><input type="checkbox" id="todo-miss"> Did you miss me?</label></li>
         </ul>
         <h2>Before Bed</h2>
         <ul>
-          <li><label><input type="checkbox" id="todo-contacts"> Remove con</label></li>
-          <li><label><input type="checkbox" id="todo-makeup"> Remove eye makeup</label></li>
-          <li><label><input type="checkbox" id="todo-blanket"> Kum pei</label></li>
-          <li><label><input type="checkbox" id="todo-lights"> Turn off the lights</label></li>
-          <li><label><input type="checkbox" id="todo-dryhair"> Dry hair hair</label></li>
-          <li><label><input type="checkbox" id="todo-wetbobo"> I am a wet bobo 🐷</label></li>
+            <li><label><input type="checkbox" id="todo-contacts"> Remove con</label></li>
+            <li><label><input type="checkbox" id="todo-makeup"> Remove eye makeup</label></li>
+            <li><label><input type="checkbox" id="todo-blanket"> Kum pei</label></li>
+            <li><label><input type="checkbox" id="todo-lights"> Turn off the lights</label></li>
+            <li><label><input type="checkbox" id="todo-dryhair"> Dry hair hair</label></li>
+            <li><label><input type="checkbox" id="todo-wetbobo"> I am a wet bobo 🐷</label></li>
         </ul>
     </div>
-
     <div id="sweet-memories" class="memory-container">
-      <h2>Sweet Memories with Hubbie</h2>
-      <img id="memory-photo" src="" alt="A sweet memory" />
-      <p id="memory-date"></p>
-      <p id="memory-location"></p>
-      <div id="memory-map" style="width:100%;height:200px;margin-top:8px;"></div>
+        <h2>Sweet Memories with Hubbie</h2>
+        <img id="memory-photo" src="" alt="A sweet memory" />
+        <p id="memory-date"></p>
+        <p id="memory-location"></p>
+        <div id="memory-map" style="width:100%;height:200px;margin-top:8px;"></div>
     </div>
-
     <audio id="player"></audio>
-
     <script>
-  const MS_PER_DAY    = 1000 * 60 * 60 * 24;
-  const togetherStart = new Date("2024-06-22T00:00:00+08:00");
-  const weddingDay    = new Date("2030-06-22T00:00:00+08:00");
-
-  (function resetChecklistDaily() {
-    const today = new Date().toISOString().split('T')[0];
-    if (localStorage.getItem('checklistDate') !== today) {
-      ['todo-water','todo-poop','todo-miss',
-       'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair','todo-wetbobo'
-      ].forEach(id => localStorage.removeItem(id));
-      localStorage.setItem('checklistDate', today);
+    const MS_PER_DAY = 1000*60*60*24;
+    const togetherStart = new Date("2024-06-22T00:00:00+08:00");
+    const weddingDay    = new Date("2030-06-22T00:00:00+08:00");
+    (function resetChecklistDaily(){
+        const today=new Date().toISOString().split('T')[0];
+        if(localStorage.getItem('checklistDate')!==today){
+            ['todo-water','todo-poop','todo-miss','todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair','todo-wetbobo'].forEach(id=>localStorage.removeItem(id));
+            localStorage.setItem('checklistDate',today);
+        }
+    })();
+    let audioFiles={};
+    fetch('audio/manifest.json').then(r=>r.json()).then(d=>{audioFiles=d;}).catch(e=>console.error(e));
+    const avatarImages={
+        benaughty:'images/naughty_egg.png',callmyname:'images/Say_name_egg.png',
+        egglanguage:'images/egg_language.png',general:'images/Default_egg.png',
+        goodmorning:'images/Good_morning_egg.png',goodnight:'images/Sleeping_egg.png',
+        praiseme:'images/Praise_me_egg.png',singforme:'images/Singing_egg.png',
+        stretchwithme:'images/Default_egg.png',gayauintern:'images/G bobo.png'
+    };
+    function playGeneralMessage(){playMessage('general');}
+    function playMessage(type){
+        const list=audioFiles[type]||[];
+        if(!list.length){console.warn('No audio for '+type);return;}
+        const entry=list[Math.floor(Math.random()*list.length)];
+        const player=document.getElementById('player');
+        const avatar=document.getElementById('avatar');
+        if(typeof entry==='string'){player.src=entry;avatar.src=avatarImages[type]||avatarImages.general;}
+        else{player.src=entry.audio;avatar.src=entry.image;}
+        player.play().catch(e=>console.error(e));
     }
-  })();
-
-  let audioFiles = {};
-  fetch('audio/manifest.json')
-    .then(r => r.json())
-    .then(data => { audioFiles = data; })
-    .catch(err => console.error('Failed to load audio manifest:', err));
-
-  const avatarImages = {
-    benaughty:    'images/naughty_egg.png',
-    callmyname:   'images/Say_name_egg.png',
-    egglanguage:  'images/egg_language.png',
-    general:      'images/Default_egg.png',
-    goodmorning:  'images/Good_morning_egg.png',
-    goodnight:    'images/Sleeping_egg.png',
-    praiseme:     'images/Praise_me_egg.png',
-    singforme:    'images/Singing_egg.png',
-    stretchwithme:'images/Default_egg.png',
-    gayauintern:  'images/G bobo.png'
-  };
-
-  function playGeneralMessage() { playMessage('general'); }
-
-  function playMessage(type) {
-    const list = audioFiles[type] || [];
-    if (list.length === 0) { console.warn(`No audio for "${type}"`); return; }
-    const entry = list[Math.floor(Math.random() * list.length)];
-    const player = document.getElementById('player');
-    const avatar = document.getElementById('avatar');
-    if (typeof entry === 'string') {
-      player.src = entry;
-      avatar.src = avatarImages[type] || avatarImages.general;
-    } else {
-      player.src = entry.audio;
-      avatar.src = entry.image;
+    function updateCounters(){
+        const now=new Date();
+        document.getElementById('days-together').textContent=Math.floor((now-togetherStart)/MS_PER_DAY)+1;
+        document.getElementById('days-until-wedding').textContent=Math.ceil((weddingDay-now)/MS_PER_DAY);
     }
-    player.play().catch(err => console.error('Playback failed:', err));
-  }
-
-  function updateCounters() {
-    const now = new Date();
-    const daysTogether = Math.floor((now - togetherStart) / MS_PER_DAY) + 1;
-    document.getElementById('days-together').textContent = daysTogether;
-    const daysUntil = Math.ceil((weddingDay - now) / MS_PER_DAY);
-    document.getElementById('days-until-wedding').textContent = daysUntil;
-  }
-
-  function syncCheckbox(id) {
-    const cb = document.getElementById(id);
-    cb.checked = localStorage.getItem(id) === 'true';
-    cb.addEventListener('change', () => localStorage.setItem(id, cb.checked));
-  }
-
-  window.addEventListener('load', () => {
-    updateCounters();
-    setInterval(updateCounters, 1000 * 60 * 60);
-    ['todo-water','todo-poop','todo-miss',
-     'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair','todo-wetbobo'
-    ].forEach(syncCheckbox);
-  });
-
-  fetch('photos/manifest.json')
-    .then(r => r.json())
-    .then(photos => {
-      const idx = Math.floor(Math.random() * photos.length);
-      const { url, date, location: locStr } = photos[idx];
-      document.getElementById('memory-photo').src = url;
-      const takenDate = new Date(date);
-      if (!isNaN(takenDate.getTime()) && date.includes('T')) {
-        const hh = String(takenDate.getHours()).padStart(2,'0');
-        const mm = String(takenDate.getMinutes()).padStart(2,'0');
-        document.getElementById('memory-date').textContent = `Taken at ${hh}:${mm}`;
-      } else {
-        document.getElementById('memory-date').textContent = `Taken on ${date}`;
-      }
-      const [lat, lon] = locStr.split(',').map(s => parseFloat(s));
-      const map = L.map('memory-map').setView([lat, lon], 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(map);
-      L.marker([lat, lon]).addTo(map);
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`)
-        .then(r => r.json())
-        .then(data => {
-          const addr = data.address || {};
-          const city = addr.city || addr.town || addr.village || addr.county || addr.state;
-          const country = addr.country;
-          let placeText = 'Unknown location';
-          if (city && country) placeText = `${city}, ${country}`;
-          else if (city) placeText = city;
-          else if (country) placeText = country;
-          document.getElementById('memory-location').textContent = placeText;
-        })
-        .catch(() => { document.getElementById('memory-location').textContent = locStr; });
-    })
-    .catch(err => console.error('Could not load memories:', err));
+    function syncCheckbox(id){
+        const cb=document.getElementById(id);
+        cb.checked=localStorage.getItem(id)==='true';
+        cb.addEventListener('change',()=>localStorage.setItem(id,cb.checked));
+    }
+    window.addEventListener('load',()=>{
+        updateCounters();
+        setInterval(updateCounters,1000*60*60);
+        ['todo-water','todo-poop','todo-miss','todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair','todo-wetbobo'].forEach(syncCheckbox);
+    });
+    fetch('photos/manifest.json').then(r=>r.json()).then(photos=>{
+        const idx=Math.floor(Math.random()*photos.length);
+        const{url,date,location:locStr}=photos[idx];
+        document.getElementById('memory-photo').src=url;
+        const takenDate=new Date(date);
+        if(!isNaN(takenDate.getTime())&&date.includes('T')){
+            document.getElementById('memory-date').textContent=`Taken at ${String(takenDate.getHours()).padStart(2,'0')}:${String(takenDate.getMinutes()).padStart(2,'0')}`;
+        }else{document.getElementById('memory-date').textContent=`Taken on ${date}`;}
+        const[lat,lon]=locStr.split(',').map(s=>parseFloat(s));
+        const map=L.map('memory-map').setView([lat,lon],13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors'}).addTo(map);
+        L.marker([lat,lon]).addTo(map);
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`)
+            .then(r=>r.json()).then(data=>{
+                const addr=data.address||{};
+                const city=addr.city||addr.town||addr.village||addr.county||addr.state;
+                const country=addr.country;
+                let placeText='Unknown location';
+                if(city&&country)placeText=`${city}, ${country}`;
+                else if(city)placeText=city;else if(country)placeText=country;
+                document.getElementById('memory-location').textContent=placeText;
+            }).catch(()=>{document.getElementById('memory-location').textContent=locStr;});
+    }).catch(e=>console.error(e));
     </script>
 </body>
 </html>

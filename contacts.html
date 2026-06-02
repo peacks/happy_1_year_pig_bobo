@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Con Lens Calendar 👁️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:'Lato',sans-serif;background-color:#ffe6f0;background-image:url('images/flowers.png');background-size:cover;background-attachment:fixed;min-height:100vh;padding:20px;color:#333;text-align:center;}
+        .navbar{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;background:rgba(255,255,255,0.85);padding:10px 16px;border-radius:16px;margin-bottom:24px;box-shadow:0 2px 8px rgba(233,30,99,0.10);}
+        .navbar a{text-decoration:none;color:#e91e63;font-weight:700;font-size:14px;padding:7px 14px;border-radius:20px;transition:background 0.2s,color 0.2s;}
+        .navbar a:hover,.navbar a.active{background:#e91e63;color:white;}
+        h1{color:#e91e63;font-size:26px;margin-bottom:6px;}
+        .subtitle{font-size:15px;color:#888;margin-bottom:20px;}
+        .warning-banner{display:none;background:#fff3cd;border:1.5px solid #ffc107;border-radius:12px;padding:12px 16px;max-width:380px;margin:0 auto 20px;font-size:14px;color:#856404;text-align:left;}
+        .warning-banner.show{display:block;}
+        .warning-banner strong{display:block;font-size:15px;margin-bottom:4px;}
+        .form-card{background:rgba(255,255,255,0.90);border-radius:16px;padding:20px;max-width:380px;margin:0 auto 28px;box-shadow:0 2px 12px rgba(233,30,99,0.08);text-align:left;}
+        .form-card h2{color:#e91e63;font-size:16px;margin-bottom:14px;text-align:center;}
+        .form-row{margin-bottom:14px;}
+        .form-row label{display:block;font-size:13px;font-weight:700;color:#888;margin-bottom:5px;}
+        .form-row input[type="date"]{width:100%;padding:9px 12px;border:1.5px solid #f0c0d0;border-radius:10px;font-size:15px;background:#fff8fb;color:#333;outline:none;transition:border-color 0.2s;}
+        .form-row input[type="date"]:focus{border-color:#e91e63;}
+        .pill-group{display:flex;flex-wrap:wrap;gap:8px;}
+        .pill-group input[type="radio"]{display:none;}
+        .pill-group label{display:inline-block;padding:7px 16px;border:1.5px solid #f0c0d0;border-radius:20px;font-size:14px;font-weight:700;color:#e91e63;cursor:pointer;transition:all 0.2s;background:#fff8fb;}
+        .pill-group input[type="radio"]:checked+label{background:#e91e63;color:white;border-color:#e91e63;}
+        .submit-btn{width:100%;padding:13px;background:#e91e63;color:white;border:none;border-radius:12px;font-size:16px;font-weight:900;cursor:pointer;margin-top:4px;transition:background 0.2s;}
+        .submit-btn:hover{background:#c2185b;}
+        .legend{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;max-width:380px;margin:0 auto 16px;font-size:12px;color:#666;}
+        .legend-item{display:flex;align-items:center;gap:5px;}
+        .legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+        .dot-both{background:#e91e63;}.dot-left{background:#9c27b0;}.dot-right{background:#2196f3;}.dot-warn{background:#ff9800;}
+        .calendar-section{max-width:380px;margin:0 auto;background:rgba(255,255,255,0.88);border-radius:16px;padding:18px;box-shadow:0 2px 12px rgba(233,30,99,0.08);}
+        .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+        .cal-header h2{font-size:17px;color:#e91e63;}
+        .cal-nav{background:none;border:none;font-size:20px;color:#e91e63;cursor:pointer;padding:4px 10px;border-radius:8px;transition:background 0.2s;}
+        .cal-nav:hover{background:rgba(233,30,99,0.10);}
+        .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+        .cal-day-label{font-size:11px;font-weight:700;color:#bbb;text-align:center;padding-bottom:4px;}
+        .cal-cell{min-height:52px;border-radius:10px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;font-size:13px;cursor:default;position:relative;}
+        .cal-cell.empty{background:transparent;}
+        .cal-cell.has-data{background:rgba(233,30,99,0.07);cursor:pointer;}
+        .cal-cell.has-data:hover{background:rgba(233,30,99,0.16);}
+        .cal-cell.warn-cell{background:rgba(255,152,0,0.12);cursor:pointer;}
+        .cal-cell.warn-cell:hover{background:rgba(255,152,0,0.22);}
+        .cal-cell.today .cal-date-num{background:#e91e63;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+        .cal-date-num{font-weight:700;font-size:13px;color:#444;margin-bottom:3px;}
+        .cal-dots{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;}
+        .cal-dot{width:8px;height:8px;border-radius:50%;}
+        .warn-icon{font-size:14px;line-height:1;}
+        .popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;align-items:center;justify-content:center;}
+        .popup-overlay.show{display:flex;}
+        .popup{background:white;border-radius:18px;padding:20px;max-width:340px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:left;max-height:80vh;overflow-y:auto;}
+        .popup h3{color:#e91e63;margin-bottom:12px;font-size:17px;}
+        .con-entry{background:#fff8fb;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:13px;position:relative;}
+        .con-entry .entry-eye{font-weight:900;color:#e91e63;font-size:14px;}
+        .con-entry .entry-days{font-size:12px;color:#888;margin-top:3px;}
+        .con-entry .entry-warn{color:#ff9800;font-weight:700;font-size:12px;margin-top:3px;}
+        .entry-delete{position:absolute;top:8px;right:8px;background:none;border:none;font-size:15px;color:#ddd;cursor:pointer;}
+        .entry-delete:hover{color:#e91e63;}
+        .popup-close{display:block;margin-top:14px;width:100%;padding:10px;background:#e91e63;color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;}
+        .popup-close:hover{background:#c2185b;}
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:#e91e63;color:white;padding:12px 28px;border-radius:30px;font-size:15px;font-weight:700;opacity:0;transition:opacity 0.3s,transform 0.3s;z-index:999;pointer-events:none;}
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html">🥚 Egg Bobo</a>
+        <a href="sleep.html">😴 Sleep</a>
+        <a href="poop.html">💩 Poop</a>
+        <a href="contacts.html" class="active">👁️ Con</a>
+    </nav>
+    <h1>👁️ Con Lens Calendar</h1>
+    <p class="subtitle">Track when you changed your contact lenses!</p>
+    <div class="warning-banner" id="warning-banner">
+        <strong>⚠️ Time to change your con!</strong>
+        <span id="warning-text"></span>
+    </div>
+    <div class="form-card">
+        <h2>Log a Lens Change</h2>
+        <div class="form-row"><label>📅 Date changed</label><input type="date" id="con-date"></div>
+        <div class="form-row">
+            <label>👁️ Which eye?</label>
+            <div class="pill-group">
+                <input type="radio" name="con-eye" id="eye-both" value="Both" checked><label for="eye-both">👀 Both</label>
+                <input type="radio" name="con-eye" id="eye-left" value="Left"><label for="eye-left">👈 Left</label>
+                <input type="radio" name="con-eye" id="eye-right" value="Right"><label for="eye-right">👉 Right</label>
+            </div>
+        </div>
+        <button class="submit-btn" onclick="logCon()">👁️ Log it!</button>
+    </div>
+    <div class="legend">
+        <div class="legend-item"><div class="legend-dot dot-both"></div> Both eyes</div>
+        <div class="legend-item"><div class="legend-dot dot-left"></div> Left only</div>
+        <div class="legend-item"><div class="legend-dot dot-right"></div> Right only</div>
+        <div class="legend-item"><div class="legend-dot dot-warn"></div> 30-day warning</div>
+    </div>
+    <div class="calendar-section">
+        <div class="cal-header">
+            <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
+            <h2 id="cal-title">Month Year</h2>
+            <button class="cal-nav" onclick="changeMonth(1)">▶</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+    </div>
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
+        <div class="popup">
+            <h3 id="popup-title">Con on ...</h3>
+            <div id="popup-entries"></div>
+            <button class="popup-close" onclick="closePopup()">Close</button>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <script>
+    const STORAGE_KEY='conLensEntries';
+    const WARN_DAYS=30;
+    function loadEntries(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}catch(e){return[];}}
+    function saveEntries(e){localStorage.setItem(STORAGE_KEY,JSON.stringify(e));}
+    function monthName(i){return['January','February','March','April','May','June','July','August','September','October','November','December'][i];}
+    function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+    function daysBetween(k1,k2){return Math.floor((new Date(k2)-new Date(k1))/(1000*60*60*24));}
+    function todayKey(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
+    window.addEventListener('load',()=>{document.getElementById('con-date').value=todayKey();checkWarnings();});
+    function logCon(){
+        const date=document.getElementById('con-date').value;
+        const eye=document.querySelector('input[name="con-eye"]:checked')?.value||'Both';
+        if(!date){showToast('Please select a date!');return;}
+        const entries=loadEntries();
+        entries.push({id:Date.now(),dateKey:date,eye});
+        saveEntries(entries);renderCalendar();checkWarnings();
+        showToast(`Logged! ${eye} eye(s) changed 👁️`);
+    }
+    function checkWarnings(){
+        const entries=loadEntries();
+        const today=todayKey();
+        const warnings=[];
+        ['Left','Right'].forEach(eye=>{
+            const relevant=entries.filter(e=>e.eye===eye||e.eye==='Both');
+            if(!relevant.length)return;
+            const latest=relevant.reduce((a,b)=>a.dateKey>b.dateKey?a:b);
+            const days=daysBetween(latest.dateKey,today);
+            if(days>=WARN_DAYS)warnings.push(`${eye} eye: last changed ${days} days ago (${latest.dateKey})`);
+        });
+        const banner=document.getElementById('warning-banner');
+        if(warnings.length){document.getElementById('warning-text').textContent=warnings.join(' · ');banner.classList.add('show');}
+        else{banner.classList.remove('show');}
+    }
+    let currentYear,currentMonth;
+    function changeMonth(d){currentMonth+=d;if(currentMonth>11){currentMonth=0;currentYear++;}if(currentMonth<0){currentMonth=11;currentYear--;}renderCalendar();}
+    function eyeColor(eye){if(eye==='Both')return '#e91e63';if(eye==='Left')return '#9c27b0';if(eye==='Right')return '#2196f3';return '#ccc';}
+    function renderCalendar(){
+        const entries=loadEntries();
+        const today=todayKey();
+        const byDate={};
+        entries.forEach(e=>{if(!byDate[e.dateKey])byDate[e.dateKey]=[];byDate[e.dateKey].push(e);});
+        const warnDates=new Set();
+        ['Left','Right'].forEach(eye=>{
+            const relevant=entries.filter(e=>e.eye===eye||e.eye==='Both');
+            if(!relevant.length)return;
+            const latest=relevant.reduce((a,b)=>a.dateKey>b.dateKey?a:b);
+            const warnDate=new Date(latest.dateKey);
+            warnDate.setDate(warnDate.getDate()+WARN_DAYS);
+            warnDates.add(`${warnDate.getFullYear()}-${String(warnDate.getMonth()+1).padStart(2,'0')}-${String(warnDate.getDate()).padStart(2,'0')}`);
+        });
+        document.getElementById('cal-title').textContent=`${monthName(currentMonth)} ${currentYear}`;
+        const grid=document.getElementById('cal-grid');grid.innerHTML='';
+        ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d=>{const l=document.createElement('div');l.className='cal-day-label';l.textContent=d;grid.appendChild(l);});
+        const firstDay=new Date(currentYear,currentMonth,1).getDay();
+        const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
+        for(let i=0;i<firstDay;i++){const b=document.createElement('div');b.className='cal-cell empty';grid.appendChild(b);}
+        for(let day=1;day<=daysInMonth;day++){
+            const dateKey=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+            const dayEntries=byDate[dateKey]||[];
+            const isWarn=warnDates.has(dateKey);
+            const isToday=dateKey===today;
+            const cell=document.createElement('div');
+            let cls='cal-cell';
+            if(isWarn)cls+=' warn-cell';else if(dayEntries.length)cls+=' has-data';
+            if(isToday)cls+=' today';
+            cell.className=cls;
+            const num=document.createElement('div');num.className='cal-date-num';num.textContent=day;cell.appendChild(num);
+            if(isWarn){const wi=document.createElement('div');wi.className='warn-icon';wi.textContent='⚠️';cell.appendChild(wi);}
+            if(dayEntries.length){
+                const dots=document.createElement('div');dots.className='cal-dots';
+                dayEntries.forEach(e=>{const dot=document.createElement('div');dot.className='cal-dot';dot.style.background=eyeColor(e.eye);dots.appendChild(dot);});
+                cell.appendChild(dots);
+            }
+            if(dayEntries.length||isWarn)cell.onclick=()=>openPopup(dateKey,dayEntries,isWarn);
+            grid.appendChild(cell);
+        }
+    }
+    function openPopup(dateKey,entries,isWarn){
+        const parts=dateKey.split('-');
+        document.getElementById('popup-title').textContent=`👁️ ${parseInt(parts[2])} ${monthName(parseInt(parts[1])-1)} ${parts[0]}`;
+        const container=document.getElementById('popup-entries');container.innerHTML='';
+        if(isWarn&&!entries.length){const div=document.createElement('div');div.style.cssText='color:#ff9800;font-weight:700;font-size:14px;padding:8px 0';div.textContent='⚠️ 30-day reminder: time to change your con!';container.appendChild(div);}
+        entries.forEach(e=>{
+            const today=todayKey();
+            const daysAgo=daysBetween(e.dateKey,today);
+            const daysLeft=WARN_DAYS-daysAgo;
+            const div=document.createElement('div');div.className='con-entry';
+            div.innerHTML=`<div class="entry-eye">👁️ ${e.eye} eye${e.eye==='Both'?'s':''}</div><div class="entry-days">${daysAgo===0?'Changed today':`Changed ${daysAgo} day${daysAgo===1?'':'s'} ago`}</div>${daysLeft<=0?`<div class="entry-warn">⚠️ Due for change ${Math.abs(daysLeft)} day${Math.abs(daysLeft)===1?'':'s'} ago!</div>`:`<div class="entry-days">${daysLeft} day${daysLeft===1?'':'s'} until 30-day mark</div>`}`;
+            const btn=document.createElement('button');btn.className='entry-delete';btn.textContent='🗑';
+            btn.onclick=()=>deleteEntry(e.id);div.appendChild(btn);container.appendChild(div);
+        });
+        document.getElementById('popup-overlay').classList.add('show');
+    }
+    function closePopup(ev){if(!ev||ev.target===document.getElementById('popup-overlay')||!ev.target.closest('.popup')||ev.target.classList.contains('popup-close'))document.getElementById('popup-overlay').classList.remove('show');}
+    function deleteEntry(id){
+        let entries=loadEntries();entries=entries.filter(e=>e.id!==id);
+        saveEntries(entries);renderCalendar();checkWarnings();
+        document.getElementById('popup-overlay').classList.remove('show');
+        showToast('Entry deleted!');
+    }
+    const now=new Date();currentYear=now.getFullYear();currentMonth=now.getMonth();
+    renderCalendar();
+    </script>
+</body>
+</html>
