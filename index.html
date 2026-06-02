@@ -46,9 +46,9 @@
             margin: 20px auto;
         }
         #avatar {
-          max-height: 100vh;      /* avatar will never exceed 65% of the viewport height */
-          width: auto;           /* scale width to maintain aspect ratio */
-          margin: 20px auto;     /* give it a little breathing room top/bottom */
+          max-height: 100vh;
+          width: auto;
+          margin: 20px auto;
           transition: transform 0.2s;
         }
         #avatar:hover {
@@ -247,11 +247,9 @@
     }
   })();
 
-  // ─── Audio & Avatar data ────────────────────────────────────────
-    // ─── Audio manifest loader ───────────────────────────────────────
+  // ─── Audio manifest loader ───────────────────────────────────────
   let audioFiles = {};
 
-  // Fetch the manifest.json you generated
   fetch('audio/manifest.json')
     .then(response => response.json())
     .then(data => {
@@ -260,39 +258,50 @@
     })
     .catch(err => console.error('Failed to load audio manifest:', err));
 
-  // ─── Avatar images stay as before ───────────────────────────────
+  // ─── Avatar fallback images (used when entry is a plain string) ──
   const avatarImages = {
-    benaughty:   'images/naughty_egg.png',
-    callmyname:  'images/Say_name_egg.png',
-    egglanguage: 'images/egg_language.png',
-    general:     'images/Default_egg.png',
-    goodmorning:'images/Good_morning_egg.png',
-    goodnight:   'images/Sleeping_egg.png',
-    praiseme:    'images/Praise_me_egg.png',
-    singforme:   'images/Singing_egg.png'
+    benaughty:    'images/naughty_egg.png',
+    callmyname:   'images/Say_name_egg.png',
+    egglanguage:  'images/egg_language.png',
+    general:      'images/Default_egg.png',
+    goodmorning:  'images/Good_morning_egg.png',
+    goodnight:    'images/Sleeping_egg.png',
+    praiseme:     'images/Praise_me_egg.png',
+    singforme:    'images/Singing_egg.png',
+    stretchwithme:'images/Default_egg.png',
+    gayauintern:  'images/G bobo.png'
   };
 
-  // ─── Audio playback functions ──────────────────────────────────
+  // ─── Audio playback ──────────────────────────────────────────────
   function playGeneralMessage() {
     playMessage('general');
   }
+
   function playMessage(type) {
-  const list = audioFiles[type] || [];
-  if (list.length === 0) {
-    console.warn(`No audio clips found for "${type}" yet.`);
-    return; 
+    const list = audioFiles[type] || [];
+    if (list.length === 0) {
+      console.warn(`No audio clips found for "${type}" yet.`);
+      return;
+    }
+
+    // Pick a random entry from the list
+    const entry = list[Math.floor(Math.random() * list.length)];
+    const player  = document.getElementById('player');
+    const avatar  = document.getElementById('avatar');
+
+    // Entry can be either:
+    //   - a plain string  →  just an audio URL (old style)
+    //   - an object       →  { audio: "...", image: "..." } (new paired style)
+    if (typeof entry === 'string') {
+      player.src = entry;
+      avatar.src = avatarImages[type] || avatarImages.general;
+    } else {
+      player.src = entry.audio;
+      avatar.src = entry.image;
+    }
+
+    player.play().catch(err => console.error('Playback failed:', err));
   }
-
-  // pick and play
-  const randomMessage = list[
-    Math.floor(Math.random() * list.length)
-  ];
-  document.getElementById('avatar').src = avatarImages[type];
-  const player = document.getElementById('player');
-  player.src = randomMessage;
-  player.play().catch(err => console.error('Playback failed:', err));
-   }
-
 
   // ─── Counters ──────────────────────────────────────────────────
   function updateCounters() {
@@ -321,40 +330,35 @@
       .forEach(syncCheckbox);
   });
 
-  // ─── Sweet Memories loader ─────────────────────────────────────
-    // ─── Sweet Memories + Map + Reverse Geocode ─────────────────
+  // ─── Sweet Memories + Map + Reverse Geocode ─────────────────
   fetch('photos/manifest.json')
     .then(r => r.json())
     .then(photos => {
-      // pick a random photo each time
       const idx = Math.floor(Math.random() * photos.length);
       const { url, date, location: locStr } = photos[idx];
 
-      // show the picture & date
-        document.getElementById('memory-photo').src = url;
+      document.getElementById('memory-photo').src = url;
         
-        let formattedTime = '';
-        const takenDate = new Date(date);
+      let formattedTime = '';
+      const takenDate = new Date(date);
         
-        if (!isNaN(takenDate.getTime()) && date.includes('T')) {
-          const hh = String(takenDate.getHours()).padStart(2, '0');
-          const mm = String(takenDate.getMinutes()).padStart(2, '0');
-          formattedTime = `${hh}:${mm}`;
-          document.getElementById('memory-date').textContent = `Taken at ${formattedTime}`;
-        } else {
-          document.getElementById('memory-date').textContent = `Taken on ${date}`;
-        }
-      // parse coords
+      if (!isNaN(takenDate.getTime()) && date.includes('T')) {
+        const hh = String(takenDate.getHours()).padStart(2, '0');
+        const mm = String(takenDate.getMinutes()).padStart(2, '0');
+        formattedTime = `${hh}:${mm}`;
+        document.getElementById('memory-date').textContent = `Taken at ${formattedTime}`;
+      } else {
+        document.getElementById('memory-date').textContent = `Taken on ${date}`;
+      }
+
       const [lat, lon] = locStr.split(',').map(s => parseFloat(s));
 
-      // show map
       const map = L.map('memory-map').setView([lat, lon], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
       }).addTo(map);
       L.marker([lat, lon]).addTo(map);
 
-      // reverse-geocode
       fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`)
         .then(r => r.json())
         .then(data => {
@@ -366,19 +370,19 @@
               addr.county  ||
               addr.state;
             
-            const country = addr.country;
+          const country = addr.country;
             
-            let placeText = 'Unknown location';
-            if (city && country) {
-              placeText = `${city}, ${country}`;
-            } else if (city) {
-              placeText = city;
-            } else if (country) {
-              placeText = country;
-            }
+          let placeText = 'Unknown location';
+          if (city && country) {
+            placeText = `${city}, ${country}`;
+          } else if (city) {
+            placeText = city;
+          } else if (country) {
+            placeText = country;
+          }
             
-            document.getElementById('memory-location').textContent = placeText;
-            })
+          document.getElementById('memory-location').textContent = placeText;
+        })
         .catch(() => {
           document.getElementById('memory-location').textContent = locStr;
         });
