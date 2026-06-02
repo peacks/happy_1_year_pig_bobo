@@ -188,17 +188,16 @@
     
     <!-- ─── Relationship Counters ─── -->
     <div id="counters" class="counter-container">
-    <div class="counter">
+      <div class="counter">
         <h2>Days Together</h2>
         <p id="days-together">—</p>
-            </div>
-            <div class="counter">
-              <h2>Days Until Wedding</h2>
-              <p id="days-until-wedding">—</p>
-            </div>
+      </div>
+      <div class="counter">
+        <h2>Days Until Wedding</h2>
+        <p id="days-until-wedding">—</p>
+      </div>
     </div>
 
-    
     <!-- ─── To-Do Lists ─── -->
     <div id="todo-lists" class="todo-container">
         <h2>Daily To-Dos</h2>
@@ -215,6 +214,7 @@
           <li><label><input type="checkbox" id="todo-blanket"> Kum pei</label></li>
           <li><label><input type="checkbox" id="todo-lights"> Turn off the lights</label></li>
           <li><label><input type="checkbox" id="todo-dryhair"> Dry hair hair</label></li>
+          <li><label><input type="checkbox" id="todo-wetbobo"> I am a wet bobo 🐷</label></li>
         </ul>
     </div>
 
@@ -226,7 +226,6 @@
       <div id="memory-map" style="width:100%;height:200px;margin-top:8px;"></div>
     </div>
 
-    
     <audio id="player"></audio>
     
     <script>
@@ -241,7 +240,7 @@
     if (localStorage.getItem('checklistDate') !== today) {
       [
         'todo-water','todo-poop','todo-miss',
-        'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair'
+        'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair','todo-wetbobo'
       ].forEach(id => localStorage.removeItem(id));
       localStorage.setItem('checklistDate', today);
     }
@@ -284,14 +283,10 @@
       return;
     }
 
-    // Pick a random entry from the list
     const entry = list[Math.floor(Math.random() * list.length)];
-    const player  = document.getElementById('player');
-    const avatar  = document.getElementById('avatar');
+    const player = document.getElementById('player');
+    const avatar = document.getElementById('avatar');
 
-    // Entry can be either:
-    //   - a plain string  →  just an audio URL (old style)
-    //   - an object       →  { audio: "...", image: "..." } (new paired style)
     if (typeof entry === 'string') {
       player.src = entry;
       avatar.src = avatarImages[type] || avatarImages.general;
@@ -304,9 +299,10 @@
   }
 
   // ─── Counters ──────────────────────────────────────────────────
+  // Day 1 = the day they got together, so we add 1 to the floor result
   function updateCounters() {
     const now = new Date();
-    const daysTogether = Math.floor((now - togetherStart) / MS_PER_DAY);
+    const daysTogether = Math.floor((now - togetherStart) / MS_PER_DAY) + 1;
     document.getElementById('days-together').textContent = daysTogether;
     const daysUntil = Math.ceil((weddingDay - now) / MS_PER_DAY);
     document.getElementById('days-until-wedding').textContent = daysUntil;
@@ -325,9 +321,10 @@
   window.addEventListener('load', () => {
     updateCounters();
     setInterval(updateCounters, 1000 * 60 * 60);
-    ['todo-water','todo-poop','todo-miss',
-     'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair']
-      .forEach(syncCheckbox);
+    [
+      'todo-water','todo-poop','todo-miss',
+      'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair','todo-wetbobo'
+    ].forEach(syncCheckbox);
   });
 
   // ─── Sweet Memories + Map + Reverse Geocode ─────────────────
