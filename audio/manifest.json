@@ -27,7 +27,11 @@
     "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/Bulu-slow.mp3",
     "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/abadu.mp3",
     "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/bububu_.mp3",
-    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/mumumu.mp3"
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/mumumu.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/bulugubulushu.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/guluzhulumu.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/pelepulubu.mp3",
+    "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/egglanguage/zhilizhulugu.mp3"
   ],
   "general": [
     "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/general/Have%20meal.mp3",
@@ -60,5 +64,53 @@
     "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/singforme/Little%20pig%20walk%20zoo.mp3",
     "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/singforme/Little%20stomach%20song.mp3",
     "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/singforme/Walking%20with%20Lopo%20song.mp3"
+  ],
+  "stretchwithme": [
+    {
+      "audio": "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/stretch/banana%20tree.mp3",
+      "image": "images/banana.png"
+    },
+    {
+      "audio": "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/stretch/bat%20bat.mp3",
+      "image": "images/bat bat.png"
+    },
+    {
+      "audio": "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/stretch/cha%20siu%20pig.mp3",
+      "image": "images/chasiu egg.png"
+    },
+    {
+      "audio": "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/stretch/donggua.mp3",
+      "image": "images/folding machine.png"
+    },
+    {
+      "audio": "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/stretch/fidget%20spinner.mp3",
+      "image": "images/fidget spinner.png"
+    },
+    {
+      "audio": "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/stretch/folding%20machine.mp3",
+      "image": "images/folding machine.png"
+    }
+  ],
+  "gayauintern": [
+    {
+      "audio": "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/gayau_intern/lek%20intern.mp3",
+      "image": "images/G bobo.png"
+    },
+    {
+      "audio": "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/gayau_intern/roll%20roll%20pig.mp3",
+      "image": "images/G bobo.png"
+    },
+    {
+      "audio": "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/gayau_intern/steph%20chau.mp3",
+      "image": "images/G bobo.png"
+    },
+    {
+      "audio": "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/gayau_intern/sui%20eric.mp3",
+      "image": "images/G bobo.png"
+    },
+    {
+      "audio": "https://cdn.jsdelivr.net/gh/peacks/pig-bobo-audio@main/audio/gayau_intern/you%20are%20g%20bobo.mp3",
+      "image": "images/G bobo.png"
+    }
   ]
 }
