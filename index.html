@@ -8,20 +8,37 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
-  
-    <link
-      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
-      rel="stylesheet"
-    >
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-    />
-    <script
-      src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js">
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 
     <style>
+        /* ── Nav Bar ── */
+        .navbar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: rgba(255,255,255,0.85);
+            padding: 10px 16px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(233,30,99,0.10);
+        }
+        .navbar a {
+            text-decoration: none;
+            color: #e91e63;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 7px 14px;
+            border-radius: 20px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .navbar a:hover, .navbar a.active {
+            background: #e91e63;
+            color: white;
+        }
+
         body {
             font-family: 'Lato', sans-serif;
             background-color: #ffe6f0;
@@ -33,27 +50,16 @@
             background-size: cover;
             background-attachment: fixed;
         }
-        h1 {
-            color: #e91e63;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        p {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-        .avatar-container {
-            margin: 20px auto;
-        }
+        h1 { color: #e91e63; font-size: 28px; margin-bottom: 10px; }
+        p { font-size: 18px; margin: 10px 0; }
+        .avatar-container { margin: 20px auto; }
         #avatar {
-          max-height: 100vh;
-          width: auto;
-          margin: 20px auto;
-          transition: transform 0.2s;
+            max-height: 100vh;
+            width: auto;
+            margin: 20px auto;
+            transition: transform 0.2s;
         }
-        #avatar:hover {
-            transform: scale(1.1);
-        }
+        #avatar:hover { transform: scale(1.1); }
         .button-container {
             display: flex;
             flex-wrap: wrap;
@@ -69,105 +75,66 @@
             border: none;
             border-radius: 15px;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: background-color 0.3s;
         }
-        button:hover {
-            background-color: #d81b60;
-        }
+        button:hover { background-color: #d81b60; }
         @media (max-width: 600px) {
-            h1 {
-                font-size: 24px;
-            }
-            p {
-                font-size: 16px;
-            }
-            #avatar {
-                width: 120px;
-            }
-            button {
-                font-size: 14px;
-                padding: 8px 16px;
-            }
+            h1 { font-size: 24px; }
+            p { font-size: 16px; }
+            #avatar { width: 120px; }
+            button { font-size: 14px; padding: 8px 16px; }
         }
-
         .counter-container {
-          display: flex;
-          justify-content: center;
-          gap: 20px;
-          margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
         }
         .counter {
-          background: rgba(255, 255, 255, 0.8);
-          padding: 12px 18px;
-          border-radius: 12px;
-          min-width: 120px;
+            background: rgba(255,255,255,0.8);
+            padding: 12px 18px;
+            border-radius: 12px;
+            min-width: 120px;
         }
-        .counter h2 {
-          margin: 0;
-          font-size: 16px;
-          color: #e91e63;
-        }
-        .counter p {
-          font-size: 24px;
-          font-weight: bold;
-          margin: 4px 0 0;
-        }
-        
+        .counter h2 { margin: 0; font-size: 16px; color: #e91e63; }
+        .counter p { font-size: 24px; font-weight: bold; margin: 4px 0 0; }
         .todo-container {
-          text-align: left;
-          max-width: 320px;
-          margin: 30px auto;
-          background: rgba(255,255,255,0.8);
-          padding: 16px;
-          border-radius: 12px;
+            text-align: left;
+            max-width: 320px;
+            margin: 30px auto;
+            background: rgba(255,255,255,0.8);
+            padding: 16px;
+            border-radius: 12px;
         }
-        .todo-container h2 {
-          font-size: 18px;
-          color: #e91e63;
-          margin-bottom: 8px;
-        }
-        .todo-container ul {
-          list-style: none;
-          padding: 0;
-        }
-        .todo-container li {
-          margin-bottom: 8px;
-        }
-        .todo-container label {
-          cursor: pointer;
-          font-size: 16px;
-        }
-        .todo-container input[type="checkbox"] {
-          margin-right: 8px;
-          transform: scale(1.2);
-        }
+        .todo-container h2 { font-size: 18px; color: #e91e63; margin-bottom: 8px; }
+        .todo-container ul { list-style: none; padding: 0; }
+        .todo-container li { margin-bottom: 8px; }
+        .todo-container label { cursor: pointer; font-size: 16px; }
+        .todo-container input[type="checkbox"] { margin-right: 8px; transform: scale(1.2); }
         .memory-container {
-          margin: 30px auto;
-          max-width: 360px;
-          background: rgba(255,255,255,0.85);
-          border-radius: 12px;
-          padding: 16px;
-          text-align: center;
+            margin: 30px auto;
+            max-width: 360px;
+            background: rgba(255,255,255,0.85);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
         }
-        .memory-container h2 {
-          color: #e91e63;
-          margin-bottom: 12px;
-        }
-        .memory-container img {
-          width: 100%;
-          height: auto;
-          border-radius: 8px;
-          margin-bottom: 8px;
-        }
-        .memory-container p {
-          margin: 4px 0;
-          font-size: 14px;
-          color: #555;
-        }
+        .memory-container h2 { color: #e91e63; margin-bottom: 12px; }
+        .memory-container img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 8px; }
+        .memory-container p { margin: 4px 0; font-size: 14px; color: #555; }
     </style>
 </head>
 <body>
+
+    <!-- ─── Navigation Bar ─── -->
+    <nav class="navbar">
+        <a href="index.html" class="active">🥚 Egg Bobo</a>
+        <a href="sleep.html">😴 Sleep</a>
+        <a href="poop.html">💩 Poop</a>
+        <a href="contacts.html">👁️ Con Lens</a>
+    </nav>
+
     <h1>Happy 1 year anniversary!</h1>
     <p>Introducing: VIRTUAL EGG BOBO</p>
     <p>Talk to virtual egg bobo by tapping his head or the buttons below. HEHEHE</p>
@@ -185,7 +152,7 @@
         <button onclick="playMessage('stretchwithme')">Stretch With Me</button>
         <button onclick="playMessage('gayauintern')">Gayau Intern</button>
     </div>
-    
+
     <!-- ─── Relationship Counters ─── -->
     <div id="counters" class="counter-container">
       <div class="counter">
@@ -206,7 +173,6 @@
           <li><label><input type="checkbox" id="todo-poop"> Did you poop?</label></li>
           <li><label><input type="checkbox" id="todo-miss"> Did you miss me?</label></li>
         </ul>
-    
         <h2>Before Bed</h2>
         <ul>
           <li><label><input type="checkbox" id="todo-contacts"> Remove con</label></li>
@@ -227,37 +193,28 @@
     </div>
 
     <audio id="player"></audio>
-    
+
     <script>
-  // ─── Globals ───────────────────────────────────────────────────
   const MS_PER_DAY    = 1000 * 60 * 60 * 24;
   const togetherStart = new Date("2024-06-22T00:00:00+08:00");
   const weddingDay    = new Date("2030-06-22T00:00:00+08:00");
 
-  // ─── Reset checklist once per day ───────────────────────────────
   (function resetChecklistDaily() {
     const today = new Date().toISOString().split('T')[0];
     if (localStorage.getItem('checklistDate') !== today) {
-      [
-        'todo-water','todo-poop','todo-miss',
-        'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair','todo-wetbobo'
+      ['todo-water','todo-poop','todo-miss',
+       'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair','todo-wetbobo'
       ].forEach(id => localStorage.removeItem(id));
       localStorage.setItem('checklistDate', today);
     }
   })();
 
-  // ─── Audio manifest loader ───────────────────────────────────────
   let audioFiles = {};
-
   fetch('audio/manifest.json')
-    .then(response => response.json())
-    .then(data => {
-      audioFiles = data;
-      console.log('Loaded audio manifest:', audioFiles);
-    })
+    .then(r => r.json())
+    .then(data => { audioFiles = data; })
     .catch(err => console.error('Failed to load audio manifest:', err));
 
-  // ─── Avatar fallback images (used when entry is a plain string) ──
   const avatarImages = {
     benaughty:    'images/naughty_egg.png',
     callmyname:   'images/Say_name_egg.png',
@@ -271,22 +228,14 @@
     gayauintern:  'images/G bobo.png'
   };
 
-  // ─── Audio playback ──────────────────────────────────────────────
-  function playGeneralMessage() {
-    playMessage('general');
-  }
+  function playGeneralMessage() { playMessage('general'); }
 
   function playMessage(type) {
     const list = audioFiles[type] || [];
-    if (list.length === 0) {
-      console.warn(`No audio clips found for "${type}" yet.`);
-      return;
-    }
-
+    if (list.length === 0) { console.warn(`No audio for "${type}"`); return; }
     const entry = list[Math.floor(Math.random() * list.length)];
     const player = document.getElementById('player');
     const avatar = document.getElementById('avatar');
-
     if (typeof entry === 'string') {
       player.src = entry;
       avatar.src = avatarImages[type] || avatarImages.general;
@@ -294,12 +243,9 @@
       player.src = entry.audio;
       avatar.src = entry.image;
     }
-
     player.play().catch(err => console.error('Playback failed:', err));
   }
 
-  // ─── Counters ──────────────────────────────────────────────────
-  // Day 1 = the day they got together, so we add 1 to the floor result
   function updateCounters() {
     const now = new Date();
     const daysTogether = Math.floor((now - togetherStart) / MS_PER_DAY) + 1;
@@ -308,84 +254,55 @@
     document.getElementById('days-until-wedding').textContent = daysUntil;
   }
 
-  // ─── Checkbox persistence ──────────────────────────────────────
   function syncCheckbox(id) {
     const cb = document.getElementById(id);
     cb.checked = localStorage.getItem(id) === 'true';
-    cb.addEventListener('change', () => {
-      localStorage.setItem(id, cb.checked);
-    });
+    cb.addEventListener('change', () => localStorage.setItem(id, cb.checked));
   }
 
-  // ─── Initialize on page load ───────────────────────────────────
   window.addEventListener('load', () => {
     updateCounters();
     setInterval(updateCounters, 1000 * 60 * 60);
-    [
-      'todo-water','todo-poop','todo-miss',
-      'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair','todo-wetbobo'
+    ['todo-water','todo-poop','todo-miss',
+     'todo-contacts','todo-makeup','todo-blanket','todo-lights','todo-dryhair','todo-wetbobo'
     ].forEach(syncCheckbox);
   });
 
-  // ─── Sweet Memories + Map + Reverse Geocode ─────────────────
   fetch('photos/manifest.json')
     .then(r => r.json())
     .then(photos => {
       const idx = Math.floor(Math.random() * photos.length);
       const { url, date, location: locStr } = photos[idx];
-
       document.getElementById('memory-photo').src = url;
-        
-      let formattedTime = '';
       const takenDate = new Date(date);
-        
       if (!isNaN(takenDate.getTime()) && date.includes('T')) {
-        const hh = String(takenDate.getHours()).padStart(2, '0');
-        const mm = String(takenDate.getMinutes()).padStart(2, '0');
-        formattedTime = `${hh}:${mm}`;
-        document.getElementById('memory-date').textContent = `Taken at ${formattedTime}`;
+        const hh = String(takenDate.getHours()).padStart(2,'0');
+        const mm = String(takenDate.getMinutes()).padStart(2,'0');
+        document.getElementById('memory-date').textContent = `Taken at ${hh}:${mm}`;
       } else {
         document.getElementById('memory-date').textContent = `Taken on ${date}`;
       }
-
       const [lat, lon] = locStr.split(',').map(s => parseFloat(s));
-
       const map = L.map('memory-map').setView([lat, lon], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
       }).addTo(map);
       L.marker([lat, lon]).addTo(map);
-
       fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`)
         .then(r => r.json())
         .then(data => {
           const addr = data.address || {};
-          const city =
-              addr.city    ||
-              addr.town    ||
-              addr.village ||
-              addr.county  ||
-              addr.state;
-            
+          const city = addr.city || addr.town || addr.village || addr.county || addr.state;
           const country = addr.country;
-            
           let placeText = 'Unknown location';
-          if (city && country) {
-            placeText = `${city}, ${country}`;
-          } else if (city) {
-            placeText = city;
-          } else if (country) {
-            placeText = country;
-          }
-            
+          if (city && country) placeText = `${city}, ${country}`;
+          else if (city) placeText = city;
+          else if (country) placeText = country;
           document.getElementById('memory-location').textContent = placeText;
         })
-        .catch(() => {
-          document.getElementById('memory-location').textContent = locStr;
-        });
+        .catch(() => { document.getElementById('memory-location').textContent = locStr; });
     })
     .catch(err => console.error('Could not load memories:', err));
-</script>
-
+    </script>
 </body>
 </html>

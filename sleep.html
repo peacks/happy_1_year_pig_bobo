@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Tracker 😴</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #ffe6f0;
+            background-image: url('images/flowers.png');
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        /* ── Nav Bar ── */
+        .navbar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: rgba(255,255,255,0.85);
+            padding: 10px 16px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(233,30,99,0.10);
+        }
+        .navbar a {
+            text-decoration: none;
+            color: #e91e63;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 7px 14px;
+            border-radius: 20px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .navbar a:hover, .navbar a.active {
+            background: #e91e63;
+            color: white;
+        }
+
+        h1 { color: #e91e63; font-size: 26px; margin-bottom: 6px; }
+        .subtitle { font-size: 15px; color: #888; margin-bottom: 24px; }
+
+        /* ── Big Sleep Button ── */
+        .sleep-btn {
+            display: inline-block;
+            margin: 10px auto 28px;
+            padding: 20px 40px;
+            font-size: 22px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff69b4, #e91e63);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(233,30,99,0.30);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .sleep-btn:hover { transform: scale(1.04); box-shadow: 0 8px 24px rgba(233,30,99,0.40); }
+        .sleep-btn:active { transform: scale(0.97); }
+
+        /* ── Last logged notice ── */
+        .last-logged {
+            background: rgba(255,255,255,0.85);
+            border-radius: 12px;
+            padding: 12px 20px;
+            max-width: 320px;
+            margin: 0 auto 28px;
+            font-size: 15px;
+            color: #555;
+        }
+        .last-logged strong { color: #e91e63; }
+
+        /* ── Toast notification ── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #e91e63;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 999;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ── Calendar ── */
+        .calendar-section {
+            max-width: 380px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.88);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 2px 12px rgba(233,30,99,0.08);
+        }
+        .cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .cal-header h2 { font-size: 17px; color: #e91e63; }
+        .cal-nav {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #e91e63;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .cal-nav:hover { background: rgba(233,30,99,0.10); }
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        .cal-day-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #bbb;
+            text-align: center;
+            padding-bottom: 4px;
+        }
+        .cal-cell {
+            min-height: 48px;
+            border-radius: 10px;
+            padding: 4px 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 13px;
+            cursor: default;
+        }
+        .cal-cell.empty { background: transparent; }
+        .cal-cell.has-data {
+            background: rgba(233,30,99,0.08);
+            cursor: pointer;
+        }
+        .cal-cell.has-data:hover { background: rgba(233,30,99,0.18); }
+        .cal-cell.today .cal-date-num {
+            background: #e91e63;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cal-date-num { font-weight: 700; font-size: 13px; color: #444; margin-bottom: 2px; }
+        .cal-sleep-time { font-size: 10px; color: #e91e63; font-weight: 700; line-height: 1.2; }
+        .cal-multi { font-size: 9px; color: #aaa; }
+
+        /* ── Detail popup ── */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        .popup-overlay.show { display: flex; }
+        .popup {
+            background: white;
+            border-radius: 18px;
+            padding: 24px;
+            max-width: 320px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            text-align: left;
+        }
+        .popup h3 { color: #e91e63; margin-bottom: 12px; font-size: 17px; }
+        .popup ul { list-style: none; padding: 0; }
+        .popup ul li {
+            padding: 6px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .popup ul li:last-child { border-bottom: none; }
+        .delete-entry-btn {
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+        .delete-entry-btn:hover { color: #e91e63; }
+        .popup-close {
+            display: block;
+            margin-top: 16px;
+            width: 100%;
+            padding: 10px;
+            background: #e91e63;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .popup-close:hover { background: #c2185b; }
+    </style>
+</head>
+<body>
+
+    <!-- ─── Navigation Bar ─── -->
+    <nav class="navbar">
+        <a href="index.html">🥚 Egg Bobo</a>
+        <a href="sleep.html" class="active">😴 Sleep</a>
+        <a href="poop.html">💩 Poop</a>
+        <a href="contacts.html">👁️ Con Lens</a>
+    </nav>
+
+    <h1>😴 Sleep Tracker</h1>
+    <p class="subtitle">Tap the button when you're going to sleep!</p>
+
+    <button class="sleep-btn" onclick="logSleep()">💤 I'm going to sleep!</button>
+
+    <div class="last-logged" id="last-logged-msg">No sleep logged yet 😢</div>
+
+    <!-- ─── Calendar ─── -->
+    <div class="calendar-section">
+        <div class="cal-header">
+            <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
+            <h2 id="cal-title">Month Year</h2>
+            <button class="cal-nav" onclick="changeMonth(1)">▶</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <!-- ─── Detail Popup ─── -->
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
+        <div class="popup">
+            <h3 id="popup-title">Sleep on ...</h3>
+            <ul id="popup-list"></ul>
+            <button class="popup-close" onclick="closePopup()">Close</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    // ── Storage key ──────────────────────────────────────────────
+    const STORAGE_KEY = 'sleepEntries';
+
+    // Sleep entries are stored as an array of objects:
+    // { dateKey: "2026-06-02", time: "23:34", timestamp: 1234567890 }
+
+    function loadEntries() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+        catch(e) { return []; }
+    }
+
+    function saveEntries(entries) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    }
+
+    // ── Log sleep now ────────────────────────────────────────────
+    function logSleep() {
+        const now   = new Date();
+        const dateKey = formatDateKey(now);
+        const time    = formatTime(now);
+        const entries = loadEntries();
+        entries.push({ dateKey, time, timestamp: now.getTime() });
+        saveEntries(entries);
+        updateLastLogged();
+        renderCalendar();
+        showToast(`Sweet dreams! Logged at ${time} 🌙`);
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────
+    function formatDateKey(d) {
+        // Returns "YYYY-MM-DD" in LOCAL time
+        const y  = d.getFullYear();
+        const m  = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${dd}`;
+    }
+    function formatTime(d) {
+        const h  = String(d.getHours()).padStart(2, '0');
+        const mi = String(d.getMinutes()).padStart(2, '0');
+        return `${h}:${mi}`;
+    }
+    function monthName(idx) {
+        return ['January','February','March','April','May','June',
+                 'July','August','September','October','November','December'][idx];
+    }
+
+    // ── Last logged message ──────────────────────────────────────
+    function updateLastLogged() {
+        const entries = loadEntries();
+        if (entries.length === 0) {
+            document.getElementById('last-logged-msg').innerHTML = 'No sleep logged yet 😢';
+            return;
+        }
+        const last = entries[entries.length - 1];
+        const d    = new Date(last.timestamp);
+        const today = formatDateKey(new Date());
+        let when;
+        if (last.dateKey === today) when = 'Tonight';
+        else {
+            const parts = last.dateKey.split('-');
+            when = `${parseInt(parts[2])} ${monthName(parseInt(parts[1])-1)}`;
+        }
+        document.getElementById('last-logged-msg').innerHTML =
+            `Last logged: <strong>${when} at ${last.time}</strong> 🌙`;
+    }
+
+    // ── Toast ────────────────────────────────────────────────────
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ── Calendar ─────────────────────────────────────────────────
+    let currentYear, currentMonth;
+
+    function changeMonth(delta) {
+        currentMonth += delta;
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
+        renderCalendar();
+    }
+
+    function renderCalendar() {
+        const entries = loadEntries();
+
+        // Group entries by dateKey → array of times
+        const byDate = {};
+        entries.forEach(e => {
+            if (!byDate[e.dateKey]) byDate[e.dateKey] = [];
+            byDate[e.dateKey].push(e.time);
+        });
+
+        document.getElementById('cal-title').textContent =
+            `${monthName(currentMonth)} ${currentYear}`;
+
+        const grid = document.getElementById('cal-grid');
+        grid.innerHTML = '';
+
+        // Day labels
+        ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
+            const lbl = document.createElement('div');
+            lbl.className = 'cal-day-label';
+            lbl.textContent = d;
+            grid.appendChild(lbl);
+        });
+
+        const todayKey = formatDateKey(new Date());
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+        // Empty cells before day 1
+        for (let i = 0; i < firstDay; i++) {
+            const blank = document.createElement('div');
+            blank.className = 'cal-cell empty';
+            grid.appendChild(blank);
+        }
+
+        // Day cells
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateKey = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+            const times   = byDate[dateKey] || [];
+            const cell    = document.createElement('div');
+            cell.className = 'cal-cell' +
+                (times.length ? ' has-data' : '') +
+                (dateKey === todayKey ? ' today' : '');
+
+            // Date number
+            const num = document.createElement('div');
+            num.className = 'cal-date-num';
+            num.textContent = day;
+            cell.appendChild(num);
+
+            // Sleep time(s)
+            if (times.length === 1) {
+                const t = document.createElement('div');
+                t.className = 'cal-sleep-time';
+                t.textContent = times[0];
+                cell.appendChild(t);
+            } else if (times.length > 1) {
+                const t = document.createElement('div');
+                t.className = 'cal-sleep-time';
+                t.textContent = times[times.length - 1]; // show latest
+                cell.appendChild(t);
+                const more = document.createElement('div');
+                more.className = 'cal-multi';
+                more.textContent = `+${times.length - 1} more`;
+                cell.appendChild(more);
+            }
+
+            if (times.length) {
+                cell.onclick = () => openPopup(dateKey, times);
+            }
+
+            grid.appendChild(cell);
+        }
+    }
+
+    // ── Popup ─────────────────────────────────────────────────────
+    function openPopup(dateKey, times) {
+        const parts = dateKey.split('-');
+        document.getElementById('popup-title').textContent =
+            `😴 Sleep on ${parseInt(parts[2])} ${monthName(parseInt(parts[1])-1)} ${parts[0]}`;
+        const list = document.getElementById('popup-list');
+        list.innerHTML = '';
+        times.forEach((time, idx) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>💤 Logged at ${time}</span>`;
+            const btn = document.createElement('button');
+            btn.className = 'delete-entry-btn';
+            btn.title = 'Delete this entry';
+            btn.textContent = '🗑';
+            btn.onclick = () => deleteEntry(dateKey, time);
+            li.appendChild(btn);
+            list.appendChild(li);
+        });
+        document.getElementById('popup-overlay').classList.add('show');
+    }
+
+    function closePopup(e) {
+        if (!e || e.target === document.getElementById('popup-overlay') || e.type !== 'click' || !e.target.closest('.popup') || e.target.classList.contains('popup-close')) {
+            document.getElementById('popup-overlay').classList.remove('show');
+        }
+    }
+
+    function deleteEntry(dateKey, time) {
+        let entries = loadEntries();
+        // Remove first match of this dateKey + time
+        const idx = entries.findIndex(e => e.dateKey === dateKey && e.time === time);
+        if (idx !== -1) entries.splice(idx, 1);
+        saveEntries(entries);
+        renderCalendar();
+        updateLastLogged();
+        document.getElementById('popup-overlay').classList.remove('show');
+        showToast('Entry deleted!');
+    }
+
+    // ── Init ──────────────────────────────────────────────────────
+    const now = new Date();
+    currentYear  = now.getFullYear();
+    currentMonth = now.getMonth();
+    updateLastLogged();
+    renderCalendar();
+    </script>
+</body>
+</html>
