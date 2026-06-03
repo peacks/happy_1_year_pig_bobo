@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Con Lens Calendar 👁️</title>
+    <title>Con Lens Tracker 👁️</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
@@ -15,54 +15,69 @@
         .navbar a:hover,.navbar a.active{background:#e91e63;color:white;}
         h1{color:#e91e63;font-size:26px;margin-bottom:6px;}
         .subtitle{font-size:15px;color:#888;margin-bottom:20px;}
-        .warning-banner{display:none;background:#fff3cd;border:1.5px solid #ffc107;border-radius:12px;padding:12px 16px;max-width:380px;margin:0 auto 20px;font-size:14px;color:#856404;text-align:left;}
-        .warning-banner.show{display:block;}
-        .warning-banner strong{display:block;font-size:15px;margin-bottom:4px;}
-        .form-card{background:rgba(255,255,255,0.90);border-radius:16px;padding:20px;max-width:380px;margin:0 auto 28px;box-shadow:0 2px 12px rgba(233,30,99,0.08);text-align:left;}
+        .syncing{font-size:12px;color:#aaa;margin-bottom:8px;min-height:18px;}
+        /* Alert banner */
+        .alert-banner{background:#fff3cd;border:1px solid #ffc107;border-radius:12px;padding:12px 16px;max-width:360px;margin:0 auto 16px;font-size:14px;color:#856404;display:none;}
+        .alert-banner.show{display:block;}
+        /* Form card */
+        .form-card{background:rgba(255,255,255,0.90);border-radius:16px;padding:20px;max-width:360px;margin:0 auto 28px;box-shadow:0 2px 12px rgba(233,30,99,0.08);text-align:left;}
         .form-card h2{color:#e91e63;font-size:16px;margin-bottom:14px;text-align:center;}
-        .form-row{margin-bottom:14px;}
-        .form-row label{display:block;font-size:13px;font-weight:700;color:#888;margin-bottom:5px;}
-        .form-row input[type="date"]{width:100%;padding:9px 12px;border:1.5px solid #f0c0d0;border-radius:10px;font-size:15px;background:#fff8fb;color:#333;outline:none;transition:border-color 0.2s;}
-        .form-row input[type="date"]:focus{border-color:#e91e63;}
-        .pill-group{display:flex;flex-wrap:wrap;gap:8px;}
-        .pill-group input[type="radio"]{display:none;}
-        .pill-group label{display:inline-block;padding:7px 16px;border:1.5px solid #f0c0d0;border-radius:20px;font-size:14px;font-weight:700;color:#e91e63;cursor:pointer;transition:all 0.2s;background:#fff8fb;}
-        .pill-group input[type="radio"]:checked+label{background:#e91e63;color:white;border-color:#e91e63;}
-        .submit-btn{width:100%;padding:13px;background:#e91e63;color:white;border:none;border-radius:12px;font-size:16px;font-weight:900;cursor:pointer;margin-top:4px;transition:background 0.2s;}
-        .submit-btn:hover{background:#c2185b;}
-        .legend{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;max-width:380px;margin:0 auto 16px;font-size:12px;color:#666;}
-        .legend-item{display:flex;align-items:center;gap:5px;}
-        .legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
-        .dot-both{background:#e91e63;}.dot-left{background:#9c27b0;}.dot-right{background:#2196f3;}.dot-warn{background:#ff9800;}
+        .form-row{margin-bottom:12px;}
+        .form-row label{font-size:12px;color:#888;display:block;margin-bottom:4px;}
+        .form-row input{width:100%;padding:8px 12px;border:1px solid #f48fb1;border-radius:10px;font-size:14px;}
+        .toggle-group{display:flex;gap:6px;flex-wrap:wrap;}
+        .toggle-btn{padding:7px 14px;border:1px solid #f48fb1;border-radius:20px;background:white;color:#e91e63;font-size:13px;cursor:pointer;transition:background 0.15s,color 0.15s;}
+        .toggle-btn.active{background:#e91e63;color:white;border-color:#e91e63;}
+        .submit-btn{width:100%;padding:12px;background:linear-gradient(135deg,#ff69b4,#e91e63);color:white;border:none;border-radius:12px;font-size:16px;font-weight:900;cursor:pointer;margin-top:4px;box-shadow:0 4px 12px rgba(233,30,99,0.25);}
+        .submit-btn:hover{opacity:0.9;}
+        .submit-btn:disabled{opacity:0.5;cursor:not-allowed;}
+        /* Status cards */
+        .status-row{display:flex;gap:12px;justify-content:center;max-width:360px;margin:0 auto 24px;}
+        .status-card{flex:1;background:rgba(255,255,255,0.88);border-radius:14px;padding:14px 10px;box-shadow:0 2px 8px rgba(233,30,99,0.08);}
+        .status-card h3{font-size:13px;color:#888;margin-bottom:6px;}
+        .status-card .days-val{font-size:22px;font-weight:900;color:#e91e63;}
+        .status-card .days-label{font-size:11px;color:#aaa;}
+        .status-card.warn .days-val{color:#ff6f00;}
+        .status-card.danger .days-val{color:#e53935;}
+        /* Calendar */
         .calendar-section{max-width:380px;margin:0 auto;background:rgba(255,255,255,0.88);border-radius:16px;padding:18px;box-shadow:0 2px 12px rgba(233,30,99,0.08);}
         .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
         .cal-header h2{font-size:17px;color:#e91e63;}
         .cal-nav{background:none;border:none;font-size:20px;color:#e91e63;cursor:pointer;padding:4px 10px;border-radius:8px;transition:background 0.2s;}
         .cal-nav:hover{background:rgba(233,30,99,0.10);}
-        .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+        .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
         .cal-day-label{font-size:11px;font-weight:700;color:#bbb;text-align:center;padding-bottom:4px;}
         .cal-cell{min-height:52px;border-radius:10px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;font-size:13px;cursor:default;position:relative;}
-        .cal-cell.empty{background:transparent;}
-        .cal-cell.has-data{background:rgba(233,30,99,0.07);cursor:pointer;}
-        .cal-cell.has-data:hover{background:rgba(233,30,99,0.16);}
-        .cal-cell.warn-cell{background:rgba(255,152,0,0.12);cursor:pointer;}
-        .cal-cell.warn-cell:hover{background:rgba(255,152,0,0.22);}
+        .cal-cell.has-data{background:rgba(233,30,99,0.08);cursor:pointer;}
+        .cal-cell.has-data:hover{background:rgba(233,30,99,0.18);}
         .cal-cell.today .cal-date-num{background:#e91e63;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
-        .cal-date-num{font-weight:700;font-size:13px;color:#444;margin-bottom:3px;}
-        .cal-dots{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;}
-        .cal-dot{width:8px;height:8px;border-radius:50%;}
-        .warn-icon{font-size:14px;line-height:1;}
+        .cal-cell.overdue{background:rgba(255,100,0,0.10);}
+        .cal-cell.overdue .cal-date-num{color:#e65100;}
+        .cal-date-num{font-weight:700;font-size:13px;color:#444;margin-bottom:2px;}
+        .cal-eye{font-size:10px;color:#e91e63;font-weight:700;line-height:1.3;}
+        .cal-warn{font-size:14px;position:absolute;top:2px;right:4px;}
+        /* Popup */
         .popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;align-items:center;justify-content:center;}
         .popup-overlay.show{display:flex;}
-        .popup{background:white;border-radius:18px;padding:20px;max-width:340px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:left;max-height:80vh;overflow-y:auto;}
+        .popup{background:white;border-radius:18px;padding:24px;max-width:340px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:left;max-height:85vh;overflow-y:auto;}
         .popup h3{color:#e91e63;margin-bottom:12px;font-size:17px;}
-        .con-entry{background:#fff8fb;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:13px;position:relative;}
-        .con-entry .entry-eye{font-weight:900;color:#e91e63;font-size:14px;}
-        .con-entry .entry-days{font-size:12px;color:#888;margin-top:3px;}
-        .con-entry .entry-warn{color:#ff9800;font-weight:700;font-size:12px;margin-top:3px;}
-        .entry-delete{position:absolute;top:8px;right:8px;background:none;border:none;font-size:15px;color:#ddd;cursor:pointer;}
-        .entry-delete:hover{color:#e91e63;}
-        .popup-close{display:block;margin-top:14px;width:100%;padding:10px;background:#e91e63;color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;}
+        .entry-row{padding:8px 0;border-bottom:1px solid #f5f5f5;}
+        .entry-row:last-child{border-bottom:none;}
+        .entry-tag{display:inline-block;background:#fff0f5;color:#e91e63;border-radius:6px;padding:1px 7px;font-size:12px;margin:1px;}
+        .entry-actions{display:flex;gap:6px;margin-top:6px;}
+        .btn-edit{background:#fff0f5;border:1px solid #f48fb1;color:#e91e63;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;}
+        .btn-edit:hover{background:#fce4ec;}
+        .btn-del{background:#fff0f0;border:1px solid #ffcdd2;color:#e53935;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;}
+        .btn-del:hover{background:#ffebee;}
+        .edit-form{background:#fff8fa;border-radius:10px;padding:12px;margin-top:8px;display:none;}
+        .edit-form.show{display:block;}
+        .edit-form label{font-size:12px;color:#888;display:block;margin-bottom:2px;margin-top:8px;}
+        .edit-form input{width:100%;padding:7px 10px;border:1px solid #f48fb1;border-radius:8px;font-size:14px;}
+        .ef-toggle-group{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+        .ef-toggle-btn{padding:5px 10px;border:1px solid #f48fb1;border-radius:16px;background:white;color:#e91e63;font-size:12px;cursor:pointer;}
+        .ef-toggle-btn.active{background:#e91e63;color:white;}
+        .btn-save{margin-top:10px;width:100%;padding:9px;background:#e91e63;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;}
+        .popup-close{display:block;margin-top:16px;width:100%;padding:10px;background:#e91e63;color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;}
         .popup-close:hover{background:#c2185b;}
         .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:#e91e63;color:white;padding:12px 28px;border-radius:30px;font-size:15px;font-weight:700;opacity:0;transition:opacity 0.3s,transform 0.3s;z-index:999;pointer-events:none;}
         .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -75,31 +90,46 @@
         <a href="poop.html">💩 Poop</a>
         <a href="contacts.html" class="active">👁️ Con</a>
     </nav>
-    <h1>👁️ Con Lens Calendar</h1>
-    <p class="subtitle">Track when you changed your contact lenses!</p>
-    <div class="warning-banner" id="warning-banner">
-        <strong>⚠️ Time to change your con!</strong>
-        <span id="warning-text"></span>
+    <h1>👁️ Con Lens Tracker</h1>
+    <p class="subtitle">Track when you change your contact lenses! 30-day reminder included.</p>
+    <div class="syncing" id="sync-status">Loading data...</div>
+
+    <!-- Overdue alert -->
+    <div class="alert-banner" id="alert-banner"></div>
+
+    <!-- Status cards -->
+    <div class="status-row">
+        <div class="status-card" id="left-status-card">
+            <h3>👁 Left Eye</h3>
+            <div class="days-val" id="left-days">—</div>
+            <div class="days-label">days since change</div>
+        </div>
+        <div class="status-card" id="right-status-card">
+            <h3>👁 Right Eye</h3>
+            <div class="days-val" id="right-days">—</div>
+            <div class="days-label">days since change</div>
+        </div>
     </div>
+
+    <!-- Log Form -->
     <div class="form-card">
-        <h2>Log a Lens Change</h2>
-        <div class="form-row"><label>📅 Date changed</label><input type="date" id="con-date"></div>
+        <h2>+ Log a lens change</h2>
         <div class="form-row">
-            <label>👁️ Which eye?</label>
-            <div class="pill-group">
-                <input type="radio" name="con-eye" id="eye-both" value="Both" checked><label for="eye-both">👀 Both</label>
-                <input type="radio" name="con-eye" id="eye-left" value="Left"><label for="eye-left">👈 Left</label>
-                <input type="radio" name="con-eye" id="eye-right" value="Right"><label for="eye-right">👉 Right</label>
+            <label>Date</label>
+            <input type="date" id="con-date">
+        </div>
+        <div class="form-row">
+            <label>Which eye?</label>
+            <div class="toggle-group" id="eye-group">
+                <button class="toggle-btn" data-val="left"  onclick="toggleBtn('eye-group',this)">👁 Left</button>
+                <button class="toggle-btn" data-val="right" onclick="toggleBtn('eye-group',this)">👁 Right</button>
+                <button class="toggle-btn" data-val="both"  onclick="toggleBtn('eye-group',this)">👀 Both</button>
             </div>
         </div>
-        <button class="submit-btn" onclick="logCon()">👁️ Log it!</button>
+        <button class="submit-btn" id="submit-btn" onclick="logCon()" disabled>Log it 👁️</button>
     </div>
-    <div class="legend">
-        <div class="legend-item"><div class="legend-dot dot-both"></div> Both eyes</div>
-        <div class="legend-item"><div class="legend-dot dot-left"></div> Left only</div>
-        <div class="legend-item"><div class="legend-dot dot-right"></div> Right only</div>
-        <div class="legend-item"><div class="legend-dot dot-warn"></div> 30-day warning</div>
-    </div>
+
+    <!-- Calendar -->
     <div class="calendar-section">
         <div class="cal-header">
             <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
@@ -108,117 +138,262 @@
         </div>
         <div class="cal-grid" id="cal-grid"></div>
     </div>
-    <div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popup-overlay">
         <div class="popup">
-            <h3 id="popup-title">Con on ...</h3>
+            <h3 id="popup-title"></h3>
             <div id="popup-entries"></div>
             <button class="popup-close" onclick="closePopup()">Close</button>
         </div>
     </div>
     <div class="toast" id="toast"></div>
+
     <script>
-    const STORAGE_KEY='conLensEntries';
-    const WARN_DAYS=30;
-    function loadEntries(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}catch(e){return[];}}
-    function saveEntries(e){localStorage.setItem(STORAGE_KEY,JSON.stringify(e));}
-    function monthName(i){return['January','February','March','April','May','June','July','August','September','October','November','December'][i];}
-    function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
-    function daysBetween(k1,k2){return Math.floor((new Date(k2)-new Date(k1))/(1000*60*60*24));}
-    function todayKey(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
-    window.addEventListener('load',()=>{document.getElementById('con-date').value=todayKey();checkWarnings();});
-    function logCon(){
-        const date=document.getElementById('con-date').value;
-        const eye=document.querySelector('input[name="con-eye"]:checked')?.value||'Both';
-        if(!date){showToast('Please select a date!');return;}
-        const entries=loadEntries();
-        entries.push({id:Date.now(),dateKey:date,eye});
-        saveEntries(entries);renderCalendar();checkWarnings();
-        showToast(`Logged! ${eye} eye(s) changed 👁️`);
+    const BIN_ID     = '6a1f8d76da38895dfe7e9ab6';
+    const ACCESS_KEY = '$2a$10$a19eA0c/FklhDu1W0ztVqekcHJJgKOCVUo5NhF80aSoScpYaqpOvK';
+    const BIN_URL    = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+    const HEADERS    = { 'Content-Type':'application/json', 'X-Access-Key': ACCESS_KEY };
+
+    let allData = { sleep:[], poop:[], contacts:[] };
+    let currentYear, currentMonth;
+    let editingId = null;
+
+    async function fetchData() {
+        setStatus('Syncing...');
+        try {
+            const res  = await fetch(BIN_URL + '/latest', { headers: HEADERS });
+            const json = await res.json();
+            allData    = json.record || { sleep:[], poop:[], contacts:[] };
+            if (!allData.sleep)    allData.sleep    = [];
+            if (!allData.poop)     allData.poop     = [];
+            if (!allData.contacts) allData.contacts = [];
+            setStatus('');
+        } catch(e) { setStatus('⚠️ Could not load data'); }
+        document.getElementById('submit-btn').disabled = false;
+        updateStatusCards();
+        renderCalendar();
     }
-    function checkWarnings(){
-        const entries=loadEntries();
-        const today=todayKey();
-        const warnings=[];
-        ['Left','Right'].forEach(eye=>{
-            const relevant=entries.filter(e=>e.eye===eye||e.eye==='Both');
-            if(!relevant.length)return;
-            const latest=relevant.reduce((a,b)=>a.dateKey>b.dateKey?a:b);
-            const days=daysBetween(latest.dateKey,today);
-            if(days>=WARN_DAYS)warnings.push(`${eye} eye: last changed ${days} days ago (${latest.dateKey})`);
-        });
-        const banner=document.getElementById('warning-banner');
-        if(warnings.length){document.getElementById('warning-text').textContent=warnings.join(' · ');banner.classList.add('show');}
-        else{banner.classList.remove('show');}
+
+    async function saveData() {
+        setStatus('Saving...');
+        try {
+            await fetch(BIN_URL, { method:'PUT', headers:HEADERS, body:JSON.stringify(allData) });
+            setStatus('✅ Saved!'); setTimeout(() => setStatus(''), 2000);
+        } catch(e) { setStatus('⚠️ Save failed'); }
     }
-    let currentYear,currentMonth;
-    function changeMonth(d){currentMonth+=d;if(currentMonth>11){currentMonth=0;currentYear++;}if(currentMonth<0){currentMonth=11;currentYear--;}renderCalendar();}
-    function eyeColor(eye){if(eye==='Both')return '#e91e63';if(eye==='Left')return '#9c27b0';if(eye==='Right')return '#2196f3';return '#ccc';}
-    function renderCalendar(){
-        const entries=loadEntries();
-        const today=todayKey();
-        const byDate={};
-        entries.forEach(e=>{if(!byDate[e.dateKey])byDate[e.dateKey]=[];byDate[e.dateKey].push(e);});
-        const warnDates=new Set();
-        ['Left','Right'].forEach(eye=>{
-            const relevant=entries.filter(e=>e.eye===eye||e.eye==='Both');
-            if(!relevant.length)return;
-            const latest=relevant.reduce((a,b)=>a.dateKey>b.dateKey?a:b);
-            const warnDate=new Date(latest.dateKey);
-            warnDate.setDate(warnDate.getDate()+WARN_DAYS);
-            warnDates.add(`${warnDate.getFullYear()}-${String(warnDate.getMonth()+1).padStart(2,'0')}-${String(warnDate.getDate()).padStart(2,'0')}`);
+
+    function setStatus(msg) { document.getElementById('sync-status').textContent = msg; }
+    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+    function monthName(i) { return ['January','February','March','April','May','June','July','August','September','October','November','December'][i]; }
+    function formatDateKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+    function daysBetween(dateKeyA, dateKeyB) {
+        return Math.floor((new Date(dateKeyB) - new Date(dateKeyA)) / 86400000);
+    }
+
+    function toggleBtn(groupId, btn) {
+        document.querySelectorAll(`#${groupId} .toggle-btn`).forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    function getToggle(groupId) {
+        const a = document.querySelector(`#${groupId} .toggle-btn.active`);
+        return a ? a.dataset.val : '';
+    }
+
+    window.addEventListener('load', () => {
+        document.getElementById('con-date').value = formatDateKey(new Date());
+    });
+
+    // Find last change date for an eye (left / right / both counts for both)
+    function lastChangeDate(eye) {
+        const relevant = allData.contacts
+            .filter(e => e.eye === eye || e.eye === 'both')
+            .sort((a,b) => a.dateKey < b.dateKey ? 1 : -1);
+        return relevant.length ? relevant[0].dateKey : null;
+    }
+
+    function updateStatusCards() {
+        const today = formatDateKey(new Date());
+        ['left','right'].forEach(eye => {
+            const last = lastChangeDate(eye);
+            const card = document.getElementById(`${eye}-status-card`);
+            const val  = document.getElementById(`${eye}-days`);
+            if (!last) { val.textContent = '—'; card.className = 'status-card'; return; }
+            const days = daysBetween(last, today);
+            val.textContent = days;
+            card.className  = 'status-card' + (days >= 30 ? ' danger' : days >= 25 ? ' warn' : '');
         });
-        document.getElementById('cal-title').textContent=`${monthName(currentMonth)} ${currentYear}`;
-        const grid=document.getElementById('cal-grid');grid.innerHTML='';
-        ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d=>{const l=document.createElement('div');l.className='cal-day-label';l.textContent=d;grid.appendChild(l);});
-        const firstDay=new Date(currentYear,currentMonth,1).getDay();
-        const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
-        for(let i=0;i<firstDay;i++){const b=document.createElement('div');b.className='cal-cell empty';grid.appendChild(b);}
-        for(let day=1;day<=daysInMonth;day++){
-            const dateKey=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-            const dayEntries=byDate[dateKey]||[];
-            const isWarn=warnDates.has(dateKey);
-            const isToday=dateKey===today;
-            const cell=document.createElement('div');
-            let cls='cal-cell';
-            if(isWarn)cls+=' warn-cell';else if(dayEntries.length)cls+=' has-data';
-            if(isToday)cls+=' today';
-            cell.className=cls;
-            const num=document.createElement('div');num.className='cal-date-num';num.textContent=day;cell.appendChild(num);
-            if(isWarn){const wi=document.createElement('div');wi.className='warn-icon';wi.textContent='⚠️';cell.appendChild(wi);}
-            if(dayEntries.length){
-                const dots=document.createElement('div');dots.className='cal-dots';
-                dayEntries.forEach(e=>{const dot=document.createElement('div');dot.className='cal-dot';dot.style.background=eyeColor(e.eye);dots.appendChild(dot);});
-                cell.appendChild(dots);
+        // Alert banner
+        const alerts = [];
+        ['left','right'].forEach(eye => {
+            const last = lastChangeDate(eye);
+            if (last) {
+                const days = daysBetween(last, today);
+                if (days >= 30) alerts.push(`⚠️ ${eye.charAt(0).toUpperCase()+eye.slice(1)} eye: ${days} days! Change your con NOW!`);
             }
-            if(dayEntries.length||isWarn)cell.onclick=()=>openPopup(dateKey,dayEntries,isWarn);
+        });
+        const banner = document.getElementById('alert-banner');
+        if (alerts.length) { banner.innerHTML = alerts.join('<br>'); banner.classList.add('show'); }
+        else banner.classList.remove('show');
+    }
+
+    async function logCon() {
+        const date = document.getElementById('con-date').value;
+        const eye  = getToggle('eye-group');
+        if (!date) { showToast('Please pick a date!'); return; }
+        if (!eye)  { showToast('Please pick which eye!'); return; }
+        const entry = { id: uid(), dateKey: date, eye };
+        allData.contacts.push(entry);
+        updateStatusCards();
+        renderCalendar();
+        showToast(`Logged ${eye} eye change! 👁️`);
+        await saveData();
+    }
+
+    function changeMonth(d) {
+        currentMonth += d;
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
+        renderCalendar();
+    }
+
+    function renderCalendar() {
+        const today = formatDateKey(new Date());
+        // Build map of dateKey → entries
+        const byDate = {};
+        allData.contacts.forEach(e => {
+            if (!byDate[e.dateKey]) byDate[e.dateKey] = [];
+            byDate[e.dateKey].push(e);
+        });
+        // Find last change dates for overdue highlighting
+        const lastLeft  = lastChangeDate('left');
+        const lastRight = lastChangeDate('right');
+
+        document.getElementById('cal-title').textContent = `${monthName(currentMonth)} ${currentYear}`;
+        const grid = document.getElementById('cal-grid');
+        grid.innerHTML = '';
+        ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
+            const l = document.createElement('div'); l.className = 'cal-day-label'; l.textContent = d; grid.appendChild(l);
+        });
+        const firstDay    = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        for (let i = 0; i < firstDay; i++) {
+            const b = document.createElement('div'); b.className = 'cal-cell'; grid.appendChild(b);
+        }
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateKey = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+            const entries = byDate[dateKey] || [];
+            // Check if this day is 30 days after last change
+            let overdue = false;
+            if (lastLeft  && daysBetween(lastLeft, dateKey)  === 30) overdue = true;
+            if (lastRight && daysBetween(lastRight, dateKey) === 30) overdue = true;
+            const cell = document.createElement('div');
+            cell.className = 'cal-cell'
+                + (entries.length ? ' has-data' : '')
+                + (dateKey === today ? ' today' : '')
+                + (overdue ? ' overdue' : '');
+            const num = document.createElement('div'); num.className = 'cal-date-num'; num.textContent = day; cell.appendChild(num);
+            if (overdue && !entries.length) {
+                const w = document.createElement('div'); w.className = 'cal-warn'; w.textContent = '⏰'; cell.appendChild(w);
+            }
+            if (entries.length) {
+                const eyes = [...new Set(entries.map(e => e.eye))];
+                const eyeEl = document.createElement('div'); eyeEl.className = 'cal-eye';
+                eyeEl.textContent = eyes.map(e => e === 'both' ? '👀' : e === 'left' ? 'L' : 'R').join(' ');
+                cell.appendChild(eyeEl);
+                cell.onclick = () => openPopup(dateKey, entries);
+            }
             grid.appendChild(cell);
         }
     }
-    function openPopup(dateKey,entries,isWarn){
-        const parts=dateKey.split('-');
-        document.getElementById('popup-title').textContent=`👁️ ${parseInt(parts[2])} ${monthName(parseInt(parts[1])-1)} ${parts[0]}`;
-        const container=document.getElementById('popup-entries');container.innerHTML='';
-        if(isWarn&&!entries.length){const div=document.createElement('div');div.style.cssText='color:#ff9800;font-weight:700;font-size:14px;padding:8px 0';div.textContent='⚠️ 30-day reminder: time to change your con!';container.appendChild(div);}
-        entries.forEach(e=>{
-            const today=todayKey();
-            const daysAgo=daysBetween(e.dateKey,today);
-            const daysLeft=WARN_DAYS-daysAgo;
-            const div=document.createElement('div');div.className='con-entry';
-            div.innerHTML=`<div class="entry-eye">👁️ ${e.eye} eye${e.eye==='Both'?'s':''}</div><div class="entry-days">${daysAgo===0?'Changed today':`Changed ${daysAgo} day${daysAgo===1?'':'s'} ago`}</div>${daysLeft<=0?`<div class="entry-warn">⚠️ Due for change ${Math.abs(daysLeft)} day${Math.abs(daysLeft)===1?'':'s'} ago!</div>`:`<div class="entry-days">${daysLeft} day${daysLeft===1?'':'s'} until 30-day mark</div>`}`;
-            const btn=document.createElement('button');btn.className='entry-delete';btn.textContent='🗑';
-            btn.onclick=()=>deleteEntry(e.id);div.appendChild(btn);container.appendChild(div);
-        });
+
+    function openPopup(dateKey, entries) {
+        const parts = dateKey.split('-');
+        document.getElementById('popup-title').textContent =
+            `👁️ Con change on ${parseInt(parts[2])} ${monthName(parseInt(parts[1])-1)} ${parts[0]}`;
+        renderPopupEntries(dateKey, entries);
         document.getElementById('popup-overlay').classList.add('show');
     }
-    function closePopup(ev){if(!ev||ev.target===document.getElementById('popup-overlay')||!ev.target.closest('.popup')||ev.target.classList.contains('popup-close'))document.getElementById('popup-overlay').classList.remove('show');}
-    function deleteEntry(id){
-        let entries=loadEntries();entries=entries.filter(e=>e.id!==id);
-        saveEntries(entries);renderCalendar();checkWarnings();
-        document.getElementById('popup-overlay').classList.remove('show');
-        showToast('Entry deleted!');
+
+    function renderPopupEntries(dateKey, entries) {
+        const container = document.getElementById('popup-entries');
+        container.innerHTML = '';
+        entries.forEach(entry => {
+            const eyeLabel = entry.eye === 'both' ? '👀 Both eyes' : entry.eye === 'left' ? '👁 Left eye' : '👁 Right eye';
+            const row = document.createElement('div');
+            row.className = 'entry-row';
+            row.innerHTML = `
+                <div><span class="entry-tag">${eyeLabel}</span></div>
+                <div class="entry-actions">
+                    <button class="btn-edit" onclick="showEditForm('${entry.id}')">✏️ Edit</button>
+                    <button class="btn-del"  onclick="deleteEntry('${entry.id}')">🗑 Delete</button>
+                </div>
+                <div class="edit-form" id="edit-${entry.id}">
+                    <label>Date</label>
+                    <input type="date" id="ed-${entry.id}" value="${entry.dateKey}">
+                    <label>Which eye?</label>
+                    <div class="ef-toggle-group" id="ee-${entry.id}">
+                        <button class="ef-toggle-btn${entry.eye==='left'?' active':''}"  data-val="left"  onclick="efToggle('ee-${entry.id}',this)">👁 Left</button>
+                        <button class="ef-toggle-btn${entry.eye==='right'?' active':''}" data-val="right" onclick="efToggle('ee-${entry.id}',this)">👁 Right</button>
+                        <button class="ef-toggle-btn${entry.eye==='both'?' active':''}"  data-val="both"  onclick="efToggle('ee-${entry.id}',this)">👀 Both</button>
+                    </div>
+                    <button class="btn-save" onclick="saveEdit('${entry.id}')">Save changes</button>
+                </div>`;
+            container.appendChild(row);
+        });
     }
-    const now=new Date();currentYear=now.getFullYear();currentMonth=now.getMonth();
-    renderCalendar();
+
+    function efToggle(groupId, btn) {
+        document.querySelectorAll(`#${groupId} .ef-toggle-btn`).forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    function efGetToggle(groupId) {
+        const a = document.querySelector(`#${groupId} .ef-toggle-btn.active`);
+        return a ? a.dataset.val : '';
+    }
+
+    function showEditForm(id) {
+        document.querySelectorAll('.edit-form.show').forEach(f => f.classList.remove('show'));
+        if (editingId === id) { editingId = null; return; }
+        document.getElementById(`edit-${id}`).classList.add('show');
+        editingId = id;
+    }
+
+    async function saveEdit(id) {
+        const entry = allData.contacts.find(e => e.id === id);
+        if (!entry) return;
+        entry.dateKey = document.getElementById(`ed-${id}`).value || entry.dateKey;
+        entry.eye     = efGetToggle(`ee-${id}`) || entry.eye;
+        editingId     = null;
+        closePopup();
+        updateStatusCards();
+        renderCalendar();
+        showToast('Entry updated! 👁️');
+        await saveData();
+    }
+
+    async function deleteEntry(id) {
+        allData.contacts = allData.contacts.filter(e => e.id !== id);
+        closePopup(); updateStatusCards(); renderCalendar();
+        showToast('Entry deleted!');
+        await saveData();
+    }
+
+    function closePopup() {
+        document.getElementById('popup-overlay').classList.remove('show');
+        editingId = null;
+    }
+    document.getElementById('popup-overlay').addEventListener('click', e => {
+        if (e.target === document.getElementById('popup-overlay')) closePopup();
+    });
+
+    function showToast(msg) {
+        const t = document.getElementById('toast'); t.textContent = msg;
+        t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    const now = new Date(); currentYear = now.getFullYear(); currentMonth = now.getMonth();
+    fetchData();
     </script>
 </body>
 </html>
