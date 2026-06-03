@@ -90,18 +90,32 @@
     <div class="toast" id="toast"></div>
 
     <script>
-    const BIN_ID     = '6a1f8d76da38895dfe7e9ab6';
-    const ACCESS_KEY = '$2a$10$a19eA0c/FklhDu1W0ztVqekcHJJgKOCVUo5NhF80aSoScpYaqpOvK';
-    const BIN_URL    = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-    const HEADERS    = { 'Content-Type':'application/json', 'X-Access-Key': ACCESS_KEY };
+    // ─────────────────────────────────────────────────────────────
+    // JSONbin credentials
+    // BIN_ID      = the unique ID of your bin (from jsonbin.io)
+    // X-Master-Key = the key that allows both READ and WRITE
+    //
+    // FIX 1: Changed header from X-Access-Key → X-Master-Key
+    //        JSONbin v3 requires X-Master-Key for PUT (write) requests.
+    //        X-Access-Key only works for read-only access keys.
+    // ─────────────────────────────────────────────────────────────
+    const BIN_ID  = '6a1f8d76da38895dfe7e9ab6';
+    const API_KEY = '$2a$10$a19eA0c/FklhDu1W0ztVqekcHJJgKOCVUo5NhF80aSoScpYaqpOvK';
+    const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+    const HEADERS = {
+        'Content-Type': 'application/json',
+        'X-Master-Key': API_KEY   // ← FIXED: was 'X-Access-Key'
+    };
 
     let allData   = { sleep:[], poop:[], contacts:[] };
     let currentYear, currentMonth;
     let editingId = null;
+    let isSaving  = false;  // FIX 3: guard to prevent fetch racing with a save
 
-    // ── OPTION 3: re-fetch whenever user switches back to this tab/app ──
+    // Re-fetch when user switches back to this tab (e.g. from another app)
+    // Guard: skip if we are currently in the middle of saving
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') fetchData();
+        if (document.visibilityState === 'visible' && !isSaving) fetchData();
     });
 
     async function fetchData() {
@@ -116,17 +130,18 @@
             setStatus('');
         } catch(e) {
             setStatus('⚠️ Could not load data');
+            console.error('fetchData error:', e);
         }
         document.getElementById('sleep-btn').disabled = false;
         updateLastLogged();
         renderCalendar();
     }
 
-    // ── OPTION 1: fetch latest first, merge new entry, then save ──
     async function saveData(newEntry, type) {
+        isSaving = true;   // block any visibility-triggered re-fetch
         setStatus('Saving...');
         try {
-            // 1. Get the absolute latest copy from the server
+            // Step 1: Get the very latest data from JSONbin
             const res     = await fetch(BIN_URL + '/latest', { headers: HEADERS });
             const json    = await res.json();
             const fresh   = json.record || { sleep:[], poop:[], contacts:[] };
@@ -134,7 +149,7 @@
             if (!fresh.poop)     fresh.poop     = [];
             if (!fresh.contacts) fresh.contacts = [];
 
-            // 2. Add / replace our entry into the fresh copy
+            // Step 2: Apply our change to the freshly-fetched data
             if (newEntry && type) {
                 if (newEntry._delete) {
                     fresh[type] = fresh[type].filter(e => e.id !== newEntry.id);
@@ -147,15 +162,26 @@
                 }
             }
 
-            // 3. Update our local copy so UI stays consistent
+            // Step 3: Update our in-memory copy so the UI is consistent
             allData = fresh;
 
-            // 4. Push the merged result back
-            await fetch(BIN_URL, { method:'PUT', headers:HEADERS, body:JSON.stringify(fresh) });
-            setStatus('✅ Saved!'); setTimeout(() => setStatus(''), 2000);
+            // Step 4: Push back to JSONbin
+            // FIX 2: Wrap the data in { record: ... }
+            //        JSONbin v3 PUT requires the body to be { "record": { your data } }
+            //        Sending the raw object caused saves to silently fail or corrupt.
+            await fetch(BIN_URL, {
+                method:  'PUT',
+                headers: HEADERS,
+                body:    JSON.stringify({ record: fresh })  // ← FIXED: was JSON.stringify(fresh)
+            });
+
+            setStatus('✅ Saved!');
+            setTimeout(() => setStatus(''), 2000);
         } catch(e) {
             setStatus('⚠️ Save failed — check connection');
+            console.error('saveData error:', e);
         }
+        isSaving = false;  // release the guard
         updateLastLogged();
         renderCalendar();
     }

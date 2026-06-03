@@ -140,18 +140,25 @@
     <div class="toast" id="toast"></div>
 
     <script>
-    const BIN_ID     = '6a1f8d76da38895dfe7e9ab6';
-    const ACCESS_KEY = '$2a$10$a19eA0c/FklhDu1W0ztVqekcHJJgKOCVUo5NhF80aSoScpYaqpOvK';
-    const BIN_URL    = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-    const HEADERS    = { 'Content-Type':'application/json', 'X-Access-Key': ACCESS_KEY };
+    // ─────────────────────────────────────────────────────────────
+    // FIX 1: Changed header from X-Access-Key → X-Master-Key
+    //        JSONbin v3 requires X-Master-Key for PUT (write) requests.
+    // ─────────────────────────────────────────────────────────────
+    const BIN_ID  = '6a1f8d76da38895dfe7e9ab6';
+    const API_KEY = '$2a$10$a19eA0c/FklhDu1W0ztVqekcHJJgKOCVUo5NhF80aSoScpYaqpOvK';
+    const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+    const HEADERS = {
+        'Content-Type': 'application/json',
+        'X-Master-Key': API_KEY   // ← FIXED: was 'X-Access-Key'
+    };
 
     let allData = { sleep:[], poop:[], contacts:[] };
     let currentYear, currentMonth;
     let editingId = null;
+    let isSaving  = false;  // FIX 3: guard to prevent fetch racing with a save
 
-    // ── OPTION 3: re-fetch whenever user switches back to this tab/app ──
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') fetchData();
+        if (document.visibilityState === 'visible' && !isSaving) fetchData();
     });
 
     async function fetchData() {
@@ -164,17 +171,20 @@
             if (!allData.poop)     allData.poop     = [];
             if (!allData.contacts) allData.contacts = [];
             setStatus('');
-        } catch(e) { setStatus('⚠️ Could not load data'); }
+        } catch(e) {
+            setStatus('⚠️ Could not load data');
+            console.error('fetchData error:', e);
+        }
         document.getElementById('submit-btn').disabled = false;
         updateStatusCards();
         renderCalendar();
     }
 
-    // ── OPTION 1: fetch latest first, merge new entry, then save ──
     async function saveData(newEntry, type) {
+        isSaving = true;
         setStatus('Saving...');
         try {
-            // 1. Get the absolute latest copy from the server
+            // Step 1: Get freshest data from JSONbin
             const res   = await fetch(BIN_URL + '/latest', { headers: HEADERS });
             const json  = await res.json();
             const fresh = json.record || { sleep:[], poop:[], contacts:[] };
@@ -182,7 +192,7 @@
             if (!fresh.poop)     fresh.poop     = [];
             if (!fresh.contacts) fresh.contacts = [];
 
-            // 2. Apply our change to the fresh copy
+            // Step 2: Apply our change
             if (newEntry && type) {
                 if (newEntry._delete) {
                     fresh[type] = fresh[type].filter(e => e.id !== newEntry.id);
@@ -195,13 +205,24 @@
                 }
             }
 
-            // 3. Update local copy so UI stays consistent
+            // Step 3: Update local copy
             allData = fresh;
 
-            // 4. Push merged result back
-            await fetch(BIN_URL, { method:'PUT', headers:HEADERS, body:JSON.stringify(fresh) });
-            setStatus('✅ Saved!'); setTimeout(() => setStatus(''), 2000);
-        } catch(e) { setStatus('⚠️ Save failed'); }
+            // Step 4: Push to JSONbin
+            // FIX 2: Wrap body in { record: ... } as required by JSONbin v3 PUT
+            await fetch(BIN_URL, {
+                method:  'PUT',
+                headers: HEADERS,
+                body:    JSON.stringify({ record: fresh })  // ← FIXED: was JSON.stringify(fresh)
+            });
+
+            setStatus('✅ Saved!');
+            setTimeout(() => setStatus(''), 2000);
+        } catch(e) {
+            setStatus('⚠️ Save failed');
+            console.error('saveData error:', e);
+        }
+        isSaving = false;
         updateStatusCards();
         renderCalendar();
     }
