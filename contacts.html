@@ -16,10 +16,8 @@
         h1{color:#e91e63;font-size:26px;margin-bottom:6px;}
         .subtitle{font-size:15px;color:#888;margin-bottom:20px;}
         .syncing{font-size:12px;color:#aaa;margin-bottom:8px;min-height:18px;}
-        /* Alert banner */
         .alert-banner{background:#fff3cd;border:1px solid #ffc107;border-radius:12px;padding:12px 16px;max-width:360px;margin:0 auto 16px;font-size:14px;color:#856404;display:none;}
         .alert-banner.show{display:block;}
-        /* Form card */
         .form-card{background:rgba(255,255,255,0.90);border-radius:16px;padding:20px;max-width:360px;margin:0 auto 28px;box-shadow:0 2px 12px rgba(233,30,99,0.08);text-align:left;}
         .form-card h2{color:#e91e63;font-size:16px;margin-bottom:14px;text-align:center;}
         .form-row{margin-bottom:12px;}
@@ -31,7 +29,6 @@
         .submit-btn{width:100%;padding:12px;background:linear-gradient(135deg,#ff69b4,#e91e63);color:white;border:none;border-radius:12px;font-size:16px;font-weight:900;cursor:pointer;margin-top:4px;box-shadow:0 4px 12px rgba(233,30,99,0.25);}
         .submit-btn:hover{opacity:0.9;}
         .submit-btn:disabled{opacity:0.5;cursor:not-allowed;}
-        /* Status cards */
         .status-row{display:flex;gap:12px;justify-content:center;max-width:360px;margin:0 auto 24px;}
         .status-card{flex:1;background:rgba(255,255,255,0.88);border-radius:14px;padding:14px 10px;box-shadow:0 2px 8px rgba(233,30,99,0.08);}
         .status-card h3{font-size:13px;color:#888;margin-bottom:6px;}
@@ -39,7 +36,6 @@
         .status-card .days-label{font-size:11px;color:#aaa;}
         .status-card.warn .days-val{color:#ff6f00;}
         .status-card.danger .days-val{color:#e53935;}
-        /* Calendar */
         .calendar-section{max-width:380px;margin:0 auto;background:rgba(255,255,255,0.88);border-radius:16px;padding:18px;box-shadow:0 2px 12px rgba(233,30,99,0.08);}
         .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
         .cal-header h2{font-size:17px;color:#e91e63;}
@@ -56,7 +52,6 @@
         .cal-date-num{font-weight:700;font-size:13px;color:#444;margin-bottom:2px;}
         .cal-eye{font-size:10px;color:#e91e63;font-weight:700;line-height:1.3;}
         .cal-warn{font-size:14px;position:absolute;top:2px;right:4px;}
-        /* Popup */
         .popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;align-items:center;justify-content:center;}
         .popup-overlay.show{display:flex;}
         .popup{background:white;border-radius:18px;padding:24px;max-width:340px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:left;max-height:85vh;overflow-y:auto;}
@@ -94,10 +89,8 @@
     <p class="subtitle">Track when you change your contact lenses! 30-day reminder included.</p>
     <div class="syncing" id="sync-status">Loading data...</div>
 
-    <!-- Overdue alert -->
     <div class="alert-banner" id="alert-banner"></div>
 
-    <!-- Status cards -->
     <div class="status-row">
         <div class="status-card" id="left-status-card">
             <h3>👁 Left Eye</h3>
@@ -111,7 +104,6 @@
         </div>
     </div>
 
-    <!-- Log Form -->
     <div class="form-card">
         <h2>+ Log a lens change</h2>
         <div class="form-row">
@@ -129,7 +121,6 @@
         <button class="submit-btn" id="submit-btn" onclick="logCon()" disabled>Log it 👁️</button>
     </div>
 
-    <!-- Calendar -->
     <div class="calendar-section">
         <div class="cal-header">
             <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
@@ -139,7 +130,6 @@
         <div class="cal-grid" id="cal-grid"></div>
     </div>
 
-    <!-- Popup -->
     <div class="popup-overlay" id="popup-overlay">
         <div class="popup">
             <h3 id="popup-title"></h3>
@@ -159,6 +149,11 @@
     let currentYear, currentMonth;
     let editingId = null;
 
+    // ── OPTION 3: re-fetch whenever user switches back to this tab/app ──
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') fetchData();
+    });
+
     async function fetchData() {
         setStatus('Syncing...');
         try {
@@ -175,12 +170,40 @@
         renderCalendar();
     }
 
-    async function saveData() {
+    // ── OPTION 1: fetch latest first, merge new entry, then save ──
+    async function saveData(newEntry, type) {
         setStatus('Saving...');
         try {
-            await fetch(BIN_URL, { method:'PUT', headers:HEADERS, body:JSON.stringify(allData) });
+            // 1. Get the absolute latest copy from the server
+            const res   = await fetch(BIN_URL + '/latest', { headers: HEADERS });
+            const json  = await res.json();
+            const fresh = json.record || { sleep:[], poop:[], contacts:[] };
+            if (!fresh.sleep)    fresh.sleep    = [];
+            if (!fresh.poop)     fresh.poop     = [];
+            if (!fresh.contacts) fresh.contacts = [];
+
+            // 2. Apply our change to the fresh copy
+            if (newEntry && type) {
+                if (newEntry._delete) {
+                    fresh[type] = fresh[type].filter(e => e.id !== newEntry.id);
+                } else if (newEntry._edit) {
+                    const idx = fresh[type].findIndex(e => e.id === newEntry.id);
+                    if (idx !== -1) fresh[type][idx] = newEntry._data;
+                    else fresh[type].push(newEntry._data);
+                } else {
+                    fresh[type].push(newEntry);
+                }
+            }
+
+            // 3. Update local copy so UI stays consistent
+            allData = fresh;
+
+            // 4. Push merged result back
+            await fetch(BIN_URL, { method:'PUT', headers:HEADERS, body:JSON.stringify(fresh) });
             setStatus('✅ Saved!'); setTimeout(() => setStatus(''), 2000);
         } catch(e) { setStatus('⚠️ Save failed'); }
+        updateStatusCards();
+        renderCalendar();
     }
 
     function setStatus(msg) { document.getElementById('sync-status').textContent = msg; }
@@ -204,7 +227,6 @@
         document.getElementById('con-date').value = formatDateKey(new Date());
     });
 
-    // Find last change date for an eye (left / right / both counts for both)
     function lastChangeDate(eye) {
         const relevant = allData.contacts
             .filter(e => e.eye === eye || e.eye === 'both')
@@ -223,7 +245,6 @@
             val.textContent = days;
             card.className  = 'status-card' + (days >= 30 ? ' danger' : days >= 25 ? ' warn' : '');
         });
-        // Alert banner
         const alerts = [];
         ['left','right'].forEach(eye => {
             const last = lastChangeDate(eye);
@@ -243,11 +264,8 @@
         if (!date) { showToast('Please pick a date!'); return; }
         if (!eye)  { showToast('Please pick which eye!'); return; }
         const entry = { id: uid(), dateKey: date, eye };
-        allData.contacts.push(entry);
-        updateStatusCards();
-        renderCalendar();
         showToast(`Logged ${eye} eye change! 👁️`);
-        await saveData();
+        await saveData(entry, 'contacts');
     }
 
     function changeMonth(d) {
@@ -259,16 +277,13 @@
 
     function renderCalendar() {
         const today = formatDateKey(new Date());
-        // Build map of dateKey → entries
         const byDate = {};
         allData.contacts.forEach(e => {
             if (!byDate[e.dateKey]) byDate[e.dateKey] = [];
             byDate[e.dateKey].push(e);
         });
-        // Find last change dates for overdue highlighting
         const lastLeft  = lastChangeDate('left');
         const lastRight = lastChangeDate('right');
-
         document.getElementById('cal-title').textContent = `${monthName(currentMonth)} ${currentYear}`;
         const grid = document.getElementById('cal-grid');
         grid.innerHTML = '';
@@ -283,7 +298,6 @@
         for (let day = 1; day <= daysInMonth; day++) {
             const dateKey = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
             const entries = byDate[dateKey] || [];
-            // Check if this day is 30 days after last change
             let overdue = false;
             if (lastLeft  && daysBetween(lastLeft, dateKey)  === 30) overdue = true;
             if (lastRight && daysBetween(lastRight, dateKey) === 30) overdue = true;
@@ -362,21 +376,20 @@
     async function saveEdit(id) {
         const entry = allData.contacts.find(e => e.id === id);
         if (!entry) return;
-        entry.dateKey = document.getElementById(`ed-${id}`).value || entry.dateKey;
-        entry.eye     = efGetToggle(`ee-${id}`) || entry.eye;
-        editingId     = null;
+        const updated = Object.assign({}, entry, {
+            dateKey: document.getElementById(`ed-${id}`).value || entry.dateKey,
+            eye:     efGetToggle(`ee-${id}`) || entry.eye
+        });
+        editingId = null;
         closePopup();
-        updateStatusCards();
-        renderCalendar();
         showToast('Entry updated! 👁️');
-        await saveData();
+        await saveData({ _edit: true, id, _data: updated }, 'contacts');
     }
 
     async function deleteEntry(id) {
-        allData.contacts = allData.contacts.filter(e => e.id !== id);
-        closePopup(); updateStatusCards(); renderCalendar();
+        closePopup();
         showToast('Entry deleted!');
-        await saveData();
+        await saveData({ _delete: true, id }, 'contacts');
     }
 
     function closePopup() {

@@ -16,7 +16,6 @@
         h1{color:#e91e63;font-size:26px;margin-bottom:6px;}
         .subtitle{font-size:15px;color:#888;margin-bottom:20px;}
         .syncing{font-size:12px;color:#aaa;margin-bottom:8px;min-height:18px;}
-        /* Form card */
         .form-card{background:rgba(255,255,255,0.90);border-radius:16px;padding:20px;max-width:360px;margin:0 auto 28px;box-shadow:0 2px 12px rgba(233,30,99,0.08);text-align:left;}
         .form-card h2{color:#e91e63;font-size:16px;margin-bottom:14px;text-align:center;}
         .form-row{margin-bottom:12px;}
@@ -29,7 +28,6 @@
         .submit-btn{width:100%;padding:12px;background:linear-gradient(135deg,#ff69b4,#e91e63);color:white;border:none;border-radius:12px;font-size:16px;font-weight:900;cursor:pointer;margin-top:4px;box-shadow:0 4px 12px rgba(233,30,99,0.25);}
         .submit-btn:hover{opacity:0.9;}
         .submit-btn:disabled{opacity:0.5;cursor:not-allowed;}
-        /* Calendar */
         .calendar-section{max-width:380px;margin:0 auto;background:rgba(255,255,255,0.88);border-radius:16px;padding:18px;box-shadow:0 2px 12px rgba(233,30,99,0.08);}
         .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
         .cal-header h2{font-size:17px;color:#e91e63;}
@@ -43,7 +41,6 @@
         .cal-cell.today .cal-date-num{background:#e91e63;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
         .cal-date-num{font-weight:700;font-size:13px;color:#444;margin-bottom:2px;}
         .cal-count{font-size:11px;color:#e91e63;font-weight:700;}
-        /* Popup */
         .popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;align-items:center;justify-content:center;}
         .popup-overlay.show{display:flex;}
         .popup{background:white;border-radius:18px;padding:24px;max-width:340px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:left;max-height:85vh;overflow-y:auto;}
@@ -83,7 +80,6 @@
     <p class="subtitle">Log your poops here. No shame. 🐷</p>
     <div class="syncing" id="sync-status">Loading data...</div>
 
-    <!-- Log Form -->
     <div class="form-card">
         <h2>+ Log a poop</h2>
         <div class="form-row">
@@ -117,7 +113,6 @@
         <button class="submit-btn" id="submit-btn" onclick="logPoop()" disabled>Log it 💩</button>
     </div>
 
-    <!-- Calendar -->
     <div class="calendar-section">
         <div class="cal-header">
             <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
@@ -127,7 +122,6 @@
         <div class="cal-grid" id="cal-grid"></div>
     </div>
 
-    <!-- Popup -->
     <div class="popup-overlay" id="popup-overlay">
         <div class="popup">
             <h3 id="popup-title"></h3>
@@ -147,6 +141,11 @@
     let currentYear, currentMonth;
     let editingId = null;
 
+    // ── OPTION 3: re-fetch whenever user switches back to this tab/app ──
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') fetchData();
+    });
+
     async function fetchData() {
         setStatus('Syncing...');
         try {
@@ -162,12 +161,39 @@
         renderCalendar();
     }
 
-    async function saveData() {
+    // ── OPTION 1: fetch latest first, merge new entry, then save ──
+    async function saveData(newEntry, type) {
         setStatus('Saving...');
         try {
-            await fetch(BIN_URL, { method:'PUT', headers:HEADERS, body:JSON.stringify(allData) });
+            // 1. Get the absolute latest copy from the server
+            const res   = await fetch(BIN_URL + '/latest', { headers: HEADERS });
+            const json  = await res.json();
+            const fresh = json.record || { sleep:[], poop:[], contacts:[] };
+            if (!fresh.sleep)    fresh.sleep    = [];
+            if (!fresh.poop)     fresh.poop     = [];
+            if (!fresh.contacts) fresh.contacts = [];
+
+            // 2. Apply our change to the fresh copy
+            if (newEntry && type) {
+                if (newEntry._delete) {
+                    fresh[type] = fresh[type].filter(e => e.id !== newEntry.id);
+                } else if (newEntry._edit) {
+                    const idx = fresh[type].findIndex(e => e.id === newEntry.id);
+                    if (idx !== -1) fresh[type][idx] = newEntry._data;
+                    else fresh[type].push(newEntry._data);
+                } else {
+                    fresh[type].push(newEntry);
+                }
+            }
+
+            // 3. Update local copy so UI stays consistent
+            allData = fresh;
+
+            // 4. Push merged result back
+            await fetch(BIN_URL, { method:'PUT', headers:HEADERS, body:JSON.stringify(fresh) });
             setStatus('✅ Saved!'); setTimeout(() => setStatus(''), 2000);
         } catch(e) { setStatus('⚠️ Save failed'); }
+        renderCalendar();
     }
 
     function setStatus(msg) { document.getElementById('sync-status').textContent = msg; }
@@ -183,13 +209,7 @@
         const active = document.querySelector(`#${groupId} .toggle-btn.active`);
         return active ? active.dataset.val : '';
     }
-    function setToggle(groupId, val) {
-        document.querySelectorAll(`#${groupId} .toggle-btn`).forEach(b => {
-            b.classList.toggle('active', b.dataset.val === val);
-        });
-    }
 
-    // Pre-fill date and time on load
     window.addEventListener('load', () => {
         const now = new Date();
         document.getElementById('poop-date').value = formatDateKey(now);
@@ -205,12 +225,10 @@
         const remark = document.getElementById('poop-remark').value.trim();
         if (!date || !time) { showToast('Please fill in date and time!'); return; }
         const entry = { id: uid(), dateKey: date, time, size, consistency: cons, remark };
-        allData.poop.push(entry);
-        renderCalendar();
         document.getElementById('poop-remark').value = '';
         document.querySelectorAll('.toggle-btn.active').forEach(b => b.classList.remove('active'));
         showToast('Poop logged! 💩');
-        await saveData();
+        await saveData(entry, 'poop');
     }
 
     function changeMonth(d) {
@@ -318,22 +336,22 @@
     async function saveEdit(id) {
         const entry = allData.poop.find(e => e.id === id);
         if (!entry) return;
-        entry.time        = document.getElementById(`et-${id}`).value || entry.time;
-        entry.size        = efGetToggle(`es-${id}`) || entry.size;
-        entry.consistency = efGetToggle(`ec-${id}`) || entry.consistency;
-        entry.remark      = document.getElementById(`er-${id}`).value.trim();
+        const updated = Object.assign({}, entry, {
+            time:        document.getElementById(`et-${id}`).value || entry.time,
+            size:        efGetToggle(`es-${id}`) || entry.size,
+            consistency: efGetToggle(`ec-${id}`) || entry.consistency,
+            remark:      document.getElementById(`er-${id}`).value.trim()
+        });
         editingId = null;
         closePopup();
-        renderCalendar();
         showToast('Entry updated! 💩');
-        await saveData();
+        await saveData({ _edit: true, id, _data: updated }, 'poop');
     }
 
     async function deleteEntry(id) {
-        allData.poop = allData.poop.filter(e => e.id !== id);
-        closePopup(); renderCalendar();
+        closePopup();
         showToast('Entry deleted!');
-        await saveData();
+        await saveData({ _delete: true, id }, 'poop');
     }
 
     function closePopup() {

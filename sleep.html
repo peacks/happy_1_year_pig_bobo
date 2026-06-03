@@ -38,7 +38,6 @@
         .cal-date-num{font-weight:700;font-size:13px;color:#444;margin-bottom:2px;}
         .cal-sleep-time{font-size:10px;color:#e91e63;font-weight:700;line-height:1.2;}
         .cal-multi{font-size:9px;color:#aaa;}
-        /* Popup */
         .popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;align-items:center;justify-content:center;}
         .popup-overlay.show{display:flex;}
         .popup{background:white;border-radius:18px;padding:24px;max-width:340px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:left;max-height:85vh;overflow-y:auto;}
@@ -51,7 +50,6 @@
         .btn-edit:hover{background:#fce4ec;}
         .btn-del{background:#fff0f0;border:1px solid #ffcdd2;color:#e53935;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;}
         .btn-del:hover{background:#ffebee;}
-        /* Edit form inside popup */
         .edit-form{background:#fff8fa;border-radius:10px;padding:12px;margin-top:8px;display:none;}
         .edit-form.show{display:block;}
         .edit-form label{font-size:12px;color:#888;display:block;margin-bottom:2px;margin-top:8px;}
@@ -82,7 +80,6 @@
         </div>
         <div class="cal-grid" id="cal-grid"></div>
     </div>
-    <!-- Detail Popup -->
     <div class="popup-overlay" id="popup-overlay">
         <div class="popup">
             <h3 id="popup-title"></h3>
@@ -93,7 +90,6 @@
     <div class="toast" id="toast"></div>
 
     <script>
-    // ── JSONBin config ──────────────────────────────────────────
     const BIN_ID     = '6a1f8d76da38895dfe7e9ab6';
     const ACCESS_KEY = '$2a$10$a19eA0c/FklhDu1W0ztVqekcHJJgKOCVUo5NhF80aSoScpYaqpOvK';
     const BIN_URL    = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
@@ -101,9 +97,13 @@
 
     let allData   = { sleep:[], poop:[], contacts:[] };
     let currentYear, currentMonth;
-    let editingId = null;   // tracks which entry is being edited
+    let editingId = null;
 
-    // ── Fetch all data from JSONBin ─────────────────────────────
+    // ── OPTION 3: re-fetch whenever user switches back to this tab/app ──
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') fetchData();
+    });
+
     async function fetchData() {
         setStatus('Syncing...');
         try {
@@ -122,25 +122,45 @@
         renderCalendar();
     }
 
-    // ── Save all data back to JSONBin ───────────────────────────
-    async function saveData() {
+    // ── OPTION 1: fetch latest first, merge new entry, then save ──
+    async function saveData(newEntry, type) {
         setStatus('Saving...');
         try {
-            await fetch(BIN_URL, {
-                method:  'PUT',
-                headers: HEADERS,
-                body:    JSON.stringify(allData)
-            });
-            setStatus('✅ Saved!');
-            setTimeout(() => setStatus(''), 2000);
+            // 1. Get the absolute latest copy from the server
+            const res     = await fetch(BIN_URL + '/latest', { headers: HEADERS });
+            const json    = await res.json();
+            const fresh   = json.record || { sleep:[], poop:[], contacts:[] };
+            if (!fresh.sleep)    fresh.sleep    = [];
+            if (!fresh.poop)     fresh.poop     = [];
+            if (!fresh.contacts) fresh.contacts = [];
+
+            // 2. Add / replace our entry into the fresh copy
+            if (newEntry && type) {
+                if (newEntry._delete) {
+                    fresh[type] = fresh[type].filter(e => e.id !== newEntry.id);
+                } else if (newEntry._edit) {
+                    const idx = fresh[type].findIndex(e => e.id === newEntry.id);
+                    if (idx !== -1) fresh[type][idx] = newEntry._data;
+                    else fresh[type].push(newEntry._data);
+                } else {
+                    fresh[type].push(newEntry);
+                }
+            }
+
+            // 3. Update our local copy so UI stays consistent
+            allData = fresh;
+
+            // 4. Push the merged result back
+            await fetch(BIN_URL, { method:'PUT', headers:HEADERS, body:JSON.stringify(fresh) });
+            setStatus('✅ Saved!'); setTimeout(() => setStatus(''), 2000);
         } catch(e) {
             setStatus('⚠️ Save failed — check connection');
         }
+        updateLastLogged();
+        renderCalendar();
     }
 
     function setStatus(msg) { document.getElementById('sync-status').textContent = msg; }
-
-    // ── Helpers ─────────────────────────────────────────────────
     function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
     function formatDateKey(d) {
         return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -153,18 +173,13 @@
                 'July','August','September','October','November','December'][i];
     }
 
-    // ── Log sleep now ───────────────────────────────────────────
     async function logSleep() {
-        const now = new Date();
+        const now   = new Date();
         const entry = { id: uid(), dateKey: formatDateKey(now), time: formatTime(now) };
-        allData.sleep.push(entry);
-        updateLastLogged();
-        renderCalendar();
         showToast(`Sweet dreams! Logged at ${entry.time} 🌙`);
-        await saveData();
+        await saveData(entry, 'sleep');
     }
 
-    // ── Last logged message ─────────────────────────────────────
     function updateLastLogged() {
         const entries = allData.sleep;
         if (!entries.length) {
@@ -180,7 +195,6 @@
             `Last logged: <strong>${when} at ${last.time}</strong> 🌙`;
     }
 
-    // ── Toast ────────────────────────────────────────────────────
     function showToast(msg) {
         const t = document.getElementById('toast');
         t.textContent = msg;
@@ -188,7 +202,6 @@
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // ── Calendar ─────────────────────────────────────────────────
     function changeMonth(d) {
         currentMonth += d;
         if (currentMonth > 11) { currentMonth = 0; currentYear++; }
@@ -237,7 +250,6 @@
         }
     }
 
-    // ── Popup ─────────────────────────────────────────────────────
     function openPopup(dateKey, entries) {
         const parts = dateKey.split('-');
         document.getElementById('popup-title').textContent =
@@ -257,7 +269,7 @@
                     <span>💤 Logged at <strong>${entry.time}</strong></span>
                 </div>
                 <div class="entry-actions">
-                    <button class="btn-edit" onclick="showEditForm('${entry.id}', '${dateKey}')">✏️ Edit</button>
+                    <button class="btn-edit" onclick="showEditForm('${entry.id}')">✏️ Edit</button>
                     <button class="btn-del"  onclick="deleteEntry('${entry.id}')">🗑 Delete</button>
                 </div>
                 <div class="edit-form" id="edit-${entry.id}">
@@ -269,8 +281,7 @@
         });
     }
 
-    function showEditForm(id, dateKey) {
-        // Hide any open edit form first
+    function showEditForm(id) {
         document.querySelectorAll('.edit-form.show').forEach(f => f.classList.remove('show'));
         if (editingId === id) { editingId = null; return; }
         document.getElementById(`edit-${id}`).classList.add('show');
@@ -282,22 +293,17 @@
         if (!newTime) return;
         const entry = allData.sleep.find(e => e.id === id);
         if (!entry) return;
-        entry.time = newTime;
-        editingId  = null;
+        const updated = Object.assign({}, entry, { time: newTime });
+        editingId = null;
         closePopup();
-        renderCalendar();
-        updateLastLogged();
         showToast('Entry updated! 🌙');
-        await saveData();
+        await saveData({ _edit: true, id, _data: updated }, 'sleep');
     }
 
     async function deleteEntry(id) {
-        allData.sleep = allData.sleep.filter(e => e.id !== id);
         closePopup();
-        renderCalendar();
-        updateLastLogged();
         showToast('Entry deleted!');
-        await saveData();
+        await saveData({ _delete: true, id }, 'sleep');
     }
 
     function closePopup() {
@@ -308,7 +314,6 @@
         if (e.target === document.getElementById('popup-overlay')) closePopup();
     });
 
-    // ── Init ──────────────────────────────────────────────────────
     const now    = new Date();
     currentYear  = now.getFullYear();
     currentMonth = now.getMonth();
