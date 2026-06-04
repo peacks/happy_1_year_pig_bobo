@@ -132,48 +132,42 @@
     <div class="toast" id="toast"></div>
 
     <script>
+    // ─── Firebase Realtime Database ──────────────────────────────
+    // SETUP (one-time, ~5 min):
+    // 1. Go to https://console.firebase.google.com → create a free project
+    // 2. Click "Realtime Database" → Create Database → Start in TEST MODE
+    // 3. Copy your DB URL (looks like: https://YOUR-PROJECT-default-rtdb.firebaseio.com)
+    // 4. Replace YOUR-PROJECT in the DB_URL line below
+    // 5. In Database → Rules tab, set:
+    //    { "rules": { ".read": true, ".write": true } }  then Publish
+    const DB_URL = 'https://YOUR-PROJECT-default-rtdb.firebaseio.com/pigbobo.json';
     // ─────────────────────────────────────────────────────────────
-    // FIX 1: Changed header from X-Access-Key → X-Master-Key
-    //        JSONbin v3 requires X-Master-Key for PUT (write) requests.
-    // ─────────────────────────────────────────────────────────────
-    const BIN_ID  = '6a1f8d76da38895dfe7e9ab6';
-    const API_KEY = '$2a$10$a19eA0c/FklhDu1W0ztVqekcHJJgKOCVUo5NhF80aSoScpYaqpOvK';
-    const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-    const HEADERS = {
-        'Content-Type': 'application/json',
-        'X-Master-Key': API_KEY   // ← FIXED: was 'X-Access-Key'
-    };
 
-    let allData = { sleep:[], poop:[], contacts:[] };
+    let allData  = { sleep:[], poop:[], contacts:[] };
     let currentYear, currentMonth;
     let editingId = null;
-    let isSaving  = false;  // FIX 3: guard to prevent fetch racing with a save
+    let isSaving  = false;
 
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible' && !isSaving) fetchData();
     });
 
-    // unwrap: JSONBin stores our data as json.record.
-    // If old nested saves left { record: { record: {...} } }, this peels all layers.
-    function unwrap(obj) {
-        let d = obj;
-        while (d && typeof d === 'object' && !Array.isArray(d.sleep) && d.record !== undefined) {
-            d = d.record;
-        }
-        if (!d || typeof d !== 'object') d = {};
-        if (!Array.isArray(d.sleep))    d.sleep    = [];
-        if (!Array.isArray(d.poop))     d.poop     = [];
-        if (!Array.isArray(d.contacts)) d.contacts = [];
-        return d;
+    // Guarantees we always work with clean arrays — no nesting possible
+    function clean(obj) {
+        if (!obj || typeof obj !== 'object') return { sleep:[], poop:[], contacts:[] };
+        return {
+            sleep:    Array.isArray(obj.sleep)    ? obj.sleep    : [],
+            poop:     Array.isArray(obj.poop)      ? obj.poop     : [],
+            contacts: Array.isArray(obj.contacts)  ? obj.contacts : []
+        };
     }
 
-        async function fetchData() {
+    async function fetchData() {
         setStatus('Syncing...');
         try {
-            const res  = await fetch(BIN_URL + '/latest', { headers: HEADERS });
-            const json = await res.json();
-            allData    = unwrap(json.record);
-
+            const res  = await fetch(DB_URL);
+            const data = await res.json();
+            allData    = clean(data);
             setStatus('');
         } catch(e) {
             setStatus('⚠️ Could not load data');
@@ -187,13 +181,12 @@
         isSaving = true;
         setStatus('Saving...');
         try {
-            // Step 1: Get freshest data from JSONbin
-            const res   = await fetch(BIN_URL + '/latest', { headers: HEADERS });
-            const json  = await res.json();
-            const fresh = unwrap(json.record);
+            // Step 1: Read latest from Firebase
+            const res   = await fetch(DB_URL);
+            const data  = await res.json();
+            const fresh = clean(data);
 
-
-            // Step 2: Apply our change
+            // Step 2: Apply change
             if (newEntry && type) {
                 if (newEntry._delete) {
                     fresh[type] = fresh[type].filter(e => e.id !== newEntry.id);
@@ -209,11 +202,10 @@
             // Step 3: Update local copy
             allData = fresh;
 
-            // Step 4: Push to JSONbin
-            // FIX 2: Wrap body in { record: ... } as required by JSONbin v3 PUT
-            await fetch(BIN_URL, {
+            // Step 4: Write to Firebase — PUT stores exactly what you send, reads back exactly that
+            await fetch(DB_URL, {
                 method:  'PUT',
-                headers: HEADERS,
+                headers: { 'Content-Type': 'application/json' },
                 body:    JSON.stringify(fresh)
             });
 
@@ -227,7 +219,7 @@
         renderCalendar();
     }
 
-    function setStatus(msg) { document.getElementById('sync-status').textContent = msg; }
+        function setStatus(msg) { document.getElementById('sync-status').textContent = msg; }
     function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
     function monthName(i) { return ['January','February','March','April','May','June','July','August','September','October','November','December'][i]; }
     function formatDateKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
